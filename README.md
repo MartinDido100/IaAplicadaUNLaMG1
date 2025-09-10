@@ -4,6 +4,9 @@
 - Node.js (v18 o superior recomendado)
 - npm
 - Angular 20+
+   ```sh
+   npm i -g @angular/cli
+   ```
 ---
 
 ## Backend (API)
