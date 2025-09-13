@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, inject} from '@angular/core';
+import { Component, signal, OnInit, inject, ChangeDetectionStrategy} from '@angular/core';
 import { MovieService } from './services/movie-service';
 import { Movie } from './interfaces/Movie';
 
@@ -6,7 +6,8 @@ import { Movie } from './interfaces/Movie';
   selector: 'app-root',
   imports: [],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App implements OnInit{
   ngOnInit(): void {
