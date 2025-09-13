@@ -1,0 +1,52 @@
+@import '../../mixins';
+
+.logo-cont{
+    position: relative;
+    @include flex-container(row, center, center, 1rem);
+
+    & .shine-svg{
+        position: absolute;
+        top: -0.5rem;
+        left: 2.2rem;
+        pointer-events: none;
+        width: 1rem;
+        height: 1rem;
+    }
+
+    & svg{
+        color: var(--primary-color);
+    }
+}
+
+.nav{
+    @include flex-container(row, stretch, center, 1rem);
+    padding: 1.6rem 3rem;
+    border-bottom: #e5e5e5 1px solid;
+}
+
+a{
+    font-weight: 600;
+    @include flex-container(row, center, center, 0.2rem);
+    padding: .6rem 10px;
+
+    & svg{
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+
+    &:hover{
+        background: var(--primary-color);
+        border-radius: 0.5rem;
+        color: var(--secondary-color);
+    }
+}
+
+.active{
+    background: var(--primary-color);
+    border-radius: 0.5rem;
+    color: var(--secondary-color);
+}
+
+.nav-tabs{
+    @include flex-container(row, center, center, 0.5rem);
+}
