@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, NO_ERRORS_SCHEMA, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { MovieCard } from '../../shared/movie-card/movie-card';
 import { MovieService } from '../../services/movie-service';
 import { Movie } from '../../interfaces/Movie';
+import { Recommendations } from "../recommendations/recommendations";
 
 @Component({
   selector: 'app-home',
-  imports: [MovieCard],
+  imports: [MovieCard, Recommendations],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

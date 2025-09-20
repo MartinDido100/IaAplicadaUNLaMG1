@@ -13,11 +13,6 @@ export class MovieService {
     Authorization: `Bearer ${environment.movieApiToken}`,
   });
 
-  getMovies() {
-    const url = `${environment.movieApiUrl}/movie/11`;
-    return this.http.get<Movie>(url, { headers: this.apiHeaders });
-  }
-
   getPopularMovies() {
     const url = `${environment.movieApiUrl}/movie/popular`;
     return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders }).pipe(

@@ -14,6 +14,7 @@
 .movies-cards{
     @include flex-container(row, flex-start, center, 4em);
     width: 100%;
+    flex-wrap: wrap;
 }
 
 h3{
@@ -35,6 +36,5 @@ h3{
 }
 
 app-movie-card{
-  flex-grow: 1;
-  max-width: 27rem;
+  flex: 1 1 250px;
 }
