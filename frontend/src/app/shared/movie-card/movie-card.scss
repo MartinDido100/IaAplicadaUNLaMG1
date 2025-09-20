@@ -1,0 +1,74 @@
+@import '../../mixins';
+@import url('https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+
+.card{
+    background: var(--secondary-color);
+    border-radius: 0.5rem;
+    @include flex-container(column, flex-start, flex-start, 1.5rem);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 0 0 1.5rem 0;
+    transition: transform 0.3s ease;
+    width: 100%;
+
+    & .poster{
+        overflow: hidden;
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    & .poster img{
+        transition: transform 0.3s ease;
+    }
+
+    & img:hover{
+        transform: scale(1.1);
+    }
+
+}
+
+.card-content{
+    @include flex-container(column, flex-start, flex-start, 1rem);
+    padding: 0 1rem;
+    width: 100%;
+}
+
+.movie-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.movie-info{
+    font-size: 0.875rem;
+    color: #a7a5a5;
+    @include flex-container(row, flex-start, center, 0.9rem);
+
+    & span{
+        @include flex-container(row, center, center, 0.2rem);
+    }
+
+    & svg{
+        font-size: 14px;
+    }
+}
+
+.genres{
+    @include flex-container(row, flex-start, center, 0.5rem);
+
+    & .genre-pill{
+        font-size: 0.7rem;
+        border: 1px solid #e5e5e5;
+        padding: 0.2rem 0.6rem;
+        border-radius: 9999px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.desc{
+    color: #979494;
+    height: 8rem;
+    overflow-y: auto;
+    display: -webkit-box;
+    line-clamp: 4;
+    font-family: 'Pt Serif', serif;
+    -webkit-box-orient: vertical;
+}

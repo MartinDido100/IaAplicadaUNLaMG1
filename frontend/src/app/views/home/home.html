@@ -1,0 +1,27 @@
+<div class="home">
+    <div class="ia-container">
+        <app-recommendations></app-recommendations>
+    </div>
+
+    @if (topRatedMovies()) {
+        <div class="relevant-movies">
+            <h3>Peliculas Destacadas</h3>
+            <div class="movies-cards">
+                @for (movie of topRatedMovies(); track $index) {
+                    <app-movie-card [movie]="movie"></app-movie-card>
+                }
+            </div>
+        </div>
+    }
+
+    @if (popularMovies()) {
+        <div class="trend-movies">
+            <h3>Peliculas en Tendencia</h3>
+            <div class="movies-cards">
+                @for (movie of popularMovies(); track $index) {
+                    <app-movie-card [movie]="movie"></app-movie-card>
+                }
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,65 @@
+@import '../../mixins';
+@import url('https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+.logo-cont{
+    position: relative;
+    @include flex-container(row, center, center, 1rem);
+
+    & .shine-svg{
+        position: absolute;
+        top: -0.5rem;
+        left: 2.2rem;
+        pointer-events: none;
+        width: 1rem;
+        height: 1rem;
+    }
+
+    & svg{
+        color: var(--primary-color);
+    }
+}
+
+.nav{
+    @include flex-container(row, stretch, center, 1rem);
+    padding: 1.6rem 3rem;
+    border-bottom: #e5e5e5 1px solid;
+}
+
+a{
+    font-weight: 600;
+    @include flex-container(row, center, center, 0.2rem);
+    padding: .6rem 10px;
+
+    & svg{
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+
+    &:not(.register-btn):hover{
+        background: var(--primary-color);
+        border-radius: 0.5rem;
+        color: var(--secondary-color);
+    }
+}
+
+.register-btn{
+    background: var(--third-color);
+    border-radius: 0.5rem;
+    color: var(--secondary-color);
+    padding: .6rem 1rem;
+    transition: opacity 0.16;
+
+    &:hover{
+        opacity: 0.85;
+    }
+}
+
+.active{
+    background: var(--primary-color);
+    border-radius: 0.5rem;
+    color: var(--secondary-color);
+}
+
+.nav-tabs{
+    @include flex-container(row, center, center, 0.5rem);
+}
