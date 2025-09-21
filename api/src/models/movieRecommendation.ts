@@ -31,5 +31,12 @@ export interface RecommendationPromptDto {
 }
 
 export interface RecommendationOutput {
-  recommendedMovies: string[];
+  movies: RecommendedMovie[];
+}
+
+export interface RecommendedMovie {
+  title: string;
+  date: string;
+  imdbId: string;
+  reason: string;
 }

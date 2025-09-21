@@ -1,59 +1,44 @@
-import type { Movie } from "../models/index.js";
+import type { AxiosResponse } from "axios";
+import type { Movie } from "../models/movie.js";
+import type { RecommendedMovie } from "../models/movieRecommendation.js";
+import { tmdbClient } from "../utils/index.js";
 
-export interface IMovieService {
-  getMovieById(movieId: number): Promise<Movie | null>;
-}
+export class TmdbService {
+  constructor() {}
 
-export class MovieService implements IMovieService {
-  private readonly baseUrl = "https://api.themoviedb.org/3";
-  private apiKey: string;
+  async findMoviesByImdbIds(recommendedMovies: RecommendedMovie[]) {
+    const promises: Promise<AxiosResponse>[] = recommendedMovies.map((movie) =>
+      tmdbClient.get(`/find/${movie.imdbId}`, {
+        params: { external_source: "imdb_id" },
+      }),
+    );
 
-  constructor() {
-    this.apiKey = process.env.TMDB_TOKEN || "";
-    if (!this.apiKey) {
-      console.warn(
-        "TMDB API Key not provided. Movie service may not work correctly.",
-      );
-    }
-  }
+    const results = await Promise.allSettled(promises);
+    const response = await Promise.all(
+      results.map(async (res, i) => {
+        if (res.status === "fulfilled") {
+          const rawData = res.value.data;
 
-  async getMovieById(movieId: number): Promise<Movie | null> {
-    try {
-      if (!this.apiKey) {
-        throw new Error("TMDB API Key is required");
-      }
+          // Extraer el primer resultado de movie_results si existe
+          const movieData = rawData.movie_results?.[0];
+          if (!movieData) {
+            console.warn("No movie_results found for", rawData);
+            return null;
+          }
 
-      const url = `${this.baseUrl}/movie/${movieId}`;
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          return null;
+          return this.mapToMovie(movieData);
+        } else {
+          throw new Error(`Error fetching movie`);
         }
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const rawData = await response.json();
-
-      // Validar y mapear la respuesta de forma segura
-      const movieData = this.mapToMovie(rawData);
-      return movieData;
-    } catch (error) {
-      console.error(`Error fetching movie with ID ${movieId}:`, error);
-      throw error;
-    }
+      }),
+    );
+    return { response };
   }
 
   private mapToMovie(rawData: any): Movie | null {
     try {
-      // Validar campos obligatorios
       if (!rawData || typeof rawData.id !== "number") {
-        console.warn("Invalid movie data: missing or invalid id");
+        console.warn("Invalid movie data: missing or invalid id", rawData);
         return null;
       }
 
@@ -97,7 +82,7 @@ export class MovieService implements IMovieService {
 
       return movie;
     } catch (error) {
-      console.error("Error mapping movie data:", error);
+      console.error("Error mapping movie data:", error, rawData);
       return null;
     }
   }
@@ -168,39 +153,5 @@ export class MovieService implements IMovieService {
         iso_639_1: lang.iso_639_1,
         name: lang.name || "",
       }));
-  }
-
-  // Método adicional para buscar películas por título (opcional)
-  async searchMovies(query: string): Promise<Movie[]> {
-    try {
-      if (!this.apiKey) {
-        throw new Error("TMDB API Key is required");
-      }
-
-      const url = `${this.baseUrl}/search/movie?query=${encodeURIComponent(query)}`;
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${this.apiKey}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const rawResults = data.results || [];
-
-      // Mapear cada resultado de forma segura
-      const mappedMovies = rawResults
-        .map((rawMovie: any) => this.mapToMovie(rawMovie))
-        .filter((movie: Movie | null) => movie !== null) as Movie[];
-
-      return mappedMovies;
-    } catch (error) {
-      console.error(`Error searching movies with query "${query}":`, error);
-      throw error;
-    }
   }
 }

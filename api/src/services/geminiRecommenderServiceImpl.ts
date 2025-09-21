@@ -1,4 +1,6 @@
 import type {
+  Movie,
+  RecommendationDto,
   RecommendationOutput,
   RecommendationPromptDto,
 } from "../models/index.js";
@@ -7,18 +9,16 @@ import type { MovieRecommendationService } from "./interfaces/index.js";
 
 import type { AxiosResponse } from "axios";
 import axios from "axios";
+import type { TmdbService } from "./tmdbService.js";
 
 export class GeminiRecommenderServiceImpl
   implements MovieRecommendationService
 {
-  constructor() {}
+  constructor(private readonly tmdbService: TmdbService) {}
 
   async recommendMovies(
     promptParameters: RecommendationPromptDto,
-  ): Promise<RecommendationOutput> {
-    if (!Constants.GEMINI_API_KEY)
-      throw new Error("Falta GEMINI_API_KEY en variables de entorno.");
-
+  ): Promise<RecommendationDto> {
     const prompt: string = this.createPrompt(promptParameters);
 
     const response: AxiosResponse = await axios.post(
@@ -31,9 +31,18 @@ export class GeminiRecommenderServiceImpl
       throw new Error(`Gemini API error: ${response.statusText}`);
     }
 
-    return this.parseGeminiResponse(
+    const recommendationOutput: RecommendationOutput = this.parseGeminiResponse(
       response.data?.candidates?.[0]?.content?.parts?.[0]?.text ?? null,
     );
+
+    const tmdbResponse = await this.tmdbService.findMoviesByImdbIds(
+      recommendationOutput.movies,
+    );
+    const movies: Movie[] = tmdbResponse.response.filter(
+      (movie): movie is Movie => movie !== null,
+    );
+
+    return { movies };
   }
 
   private createPrompt(promptParameters: RecommendationPromptDto): string {
@@ -46,7 +55,7 @@ export class GeminiRecommenderServiceImpl
       `Duraciones aproximadas: ${promptParameters.durations?.length ? promptParameters.durations.join(", ") : ""}`,
       "En base a estos parámetros de entrada, selecciona 5 películas que estén tanto entre las mejor rankeadas en IMDb (Top Rated) como entre las que están en tendencia actualmente (Trending).",
       "Devuelve SOLO un JSON válido con este formato:",
-      `{"movies":["title":"<título>","year":"<opcional>","reason":"<por qué es adecuada>"]}`,
+      `{"movies":[{"title":"<título>","date":"<aaaa-mm-dd>","imdbId":"<id de IMDb>","reason":"<por qué es adecuada>"}]}`,
       "No agregues texto fuera del JSON.",
     ]
       .filter(Boolean)

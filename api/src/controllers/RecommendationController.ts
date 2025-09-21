@@ -4,15 +4,15 @@ import HttpStatus from "http-status";
 import type { RecommendationPromptDto } from "../models/movieRecommendation.js";
 import {
   GeminiRecommenderServiceImpl,
-  MovieService,
+  TmdbService,
 } from "../services/index.js";
 import type { MovieRecommendationService } from "../services/interfaces/index.js";
 
 export const recommendationRouter: Router = Router();
 
-const movieService: MovieService = new MovieService();
+const tmdbService = new TmdbService();
 const movieRecommendationService: MovieRecommendationService =
-  new GeminiRecommenderServiceImpl();
+  new GeminiRecommenderServiceImpl(tmdbService);
 
 recommendationRouter.post(
   "/:userId/recommend",
@@ -25,34 +25,120 @@ recommendationRouter.post(
   },
 );
 
-recommendationRouter.get(
-  "/:userId/:movieId",
-  async (req: Request, res: Response): Promise<void> => {
-    const { userId, movieId } = req.params;
-    const movieIdNumber: number = Number(movieId);
-
-    try {
-      console.log(`Getting movie ${movieIdNumber} for user ${userId}`);
-      const movie = await movieService.getMovieById(movieIdNumber);
-
-      res.status(200).json({
-        success: true,
-        userId,
-        movieId: movieIdNumber,
-        movie,
-      });
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({
-        success: false,
-        userId,
-        movieId: movieIdNumber,
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
-  },
-);
-
-export class RecommendationController {
-  movieService = new MovieService();
-}
+/**
+ * @swagger
+ * /api/recommendations/{userId}/recommend:
+ *   post:
+ *     summary: Recommend movies for a user
+ *     description: This endpoint recommends movies based on the provided payload.
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RecommendationPromptDto'
+ *     responses:
+ *       200:
+ *         description: A list of recommended movies
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/RecommendationResponse'
+ *             example:
+ *               movies:
+ *                 - adult: false
+ *                   backdrop_path: "/2u7zbn8EudG6kLlBzUYqP8RyFU4.jpg"
+ *                   belongs_to_collection: null
+ *                   budget: 0
+ *                   genres: []
+ *                   homepage: ""
+ *                   id: 122
+ *                   imdb_id: ""
+ *                   origin_country: []
+ *                   original_language: "en"
+ *                   original_title: "The Lord of the Rings: The Return of the King"
+ *                   overview: "As armies mass for a final battle that will decide the fate of the world--and powerful, ancient forces of Light and Dark compete to determine the outcome--one member of the Fellowship of the Ring is revealed as the noble heir to the throne of the Kings of Men. Yet, the sole hope for triumph over evil lies with a brave hobbit, Frodo, who, accompanied by his loyal friend Sam and the hideous, wretched Gollum, ventures deep into the very dark heart of Mordor on his seemingly impossible quest to destroy the Ring of Power.​"
+ *                   popularity: 22.591
+ *                   poster_path: "/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg"
+ *                   production_companies: []
+ *                   production_countries: []
+ *                   release_date: "2003-12-17"
+ *                   revenue: 0
+ *                   runtime: 0
+ *                   spoken_languages: []
+ *                   status: ""
+ *                   tagline: ""
+ *                   title: "The Lord of the Rings: The Return of the King"
+ *                   video: false
+ *                   vote_average: 8.489
+ *                   vote_count: 25454
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message
+ * components:
+ *   schemas:
+ *     RecommendationPromptDto:
+ *       type: object
+ *       properties:
+ *         textPrompt:
+ *           type: string
+ *         genres:
+ *           type: array
+ *           items:
+ *             type: string
+ *         moods:
+ *           type: array
+ *           items:
+ *             type: string
+ *         audiences:
+ *           type: array
+ *           items:
+ *             type: string
+ *         durations:
+ *           type: array
+ *           items:
+ *             type: string
+ *       example:
+ *         textPrompt: "Quiero ver una película emocionante y épica"
+ *         genres: ["acción", "aventura"]
+ *         moods: ["EMOCIONADO", "EPIC"]
+ *         audiences: ["ADULTS", "TEENS"]
+ *         durations: ["LONG", "MEDIUM"]
+ *     RecommendationResponse:
+ *       type: object
+ *       properties:
+ *         movies:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Movie'
+ *     Movie:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *         release_date:
+ *           type: string
+ *           format: date
+ *         imdb_id:
+ *           type: string
+ *         reason:
+ *           type: string
+ *         genres:
+ *           type: array
+ *           items:
+ *             type: string
+ */
