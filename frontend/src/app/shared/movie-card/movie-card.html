@@ -15,9 +15,9 @@
             </span>
         </div>
         <div class="genres">
-            @for (genre of genres; track $index) {
+            @for (genre of getGenres(movie()?.genre_ids); track $index) {
                 <span class="genre-pill">
-                    {{ genre }}
+                    {{ genre.name }}
                 </span>
             }
         </div>

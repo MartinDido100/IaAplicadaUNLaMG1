@@ -1,0 +1,22 @@
+.footer{
+    background: #171717;
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    flex-direction: column;
+    padding: 2rem 0;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    justify-self: center;
+
+    h1{
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+}

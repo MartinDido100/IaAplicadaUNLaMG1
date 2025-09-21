@@ -1,10 +1,67 @@
-<section class="reccomendations">
+<section class="recommendations">
     <div class="title">
         <h2>Tu proxima pelicula <br> <span>te esta esperando</span> </h2>
         <span>Descubre un universo cinematográfico infinito. Explora, filtra y encuentra <br> exactamente lo que buscas en nuestro catálogo inteligente.</span>
     </div>
 
     <div class="gemini-prompt">
-        
+        <h3>Encuentra tu pelicula perfecta</h3>
+
+        <form class="ia-form" [formGroup]="iaForm" (ngSubmit)="onSubmit()">
+            <div class="form-field">
+                <label for="textPrompt" class="form-label">¿Cómo te sientes hoy? Cuéntame tu estado de ánimo y yo encontraré la película perfecta ✨</label>
+                <textarea formControlName="textPrompt" placeholder="Escribe aquí tu estado de ánimo..." id="textPrompt" name="textPrompt"></textarea>
+            </div>
+
+            <div class="form-field">
+                <span class="form-label">Genero de la pelicula</span>
+                <div class="radio-group">
+                @for (genre of movieService.genres(); track $index) {
+                        <label>
+                            <input type="checkbox" name="genre" [value]="genre" (change)="onCheckboxChange($event, 'genres')" />
+                            {{ genre.name }}
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div class="form-field">
+                <span class="form-label">Estado de ánimo</span>
+                <div class="radio-group">
+                @for (mood of moods; track $index) {
+                        <label>
+                            <input type="checkbox" name="mood" [value]="mood" (change)="onCheckboxChange($event, 'moods')" />
+                            {{ mood | titlecase }}
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div class="form-field radios">
+                <span class="form-label">Duración de la película</span>
+                <div class="radio-group">
+                @for (duration of durations; track $index) {
+                        <label>
+                            <input type="checkbox" name="duration" [value]="duration" (change)="onCheckboxChange($event, 'durations')" />
+                            {{ duration | titlecase }}
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div class="form-field">
+                <span class="form-label">Audiencia objetivo</span>
+                <div class="radio-group">
+                    @for (audience of audiences; track $index) {
+                        <label>
+                            <input type="checkbox" name="audience" [value]="audience" (change)="onCheckboxChange($event, 'audiences')" />
+                            {{ audience | titlecase }}
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <button type="submit">Buscar peliculas con IA ✨</button>
+        </form>
     </div>
 </section>

@@ -1,7 +1,8 @@
-import { Component, signal, ChangeDetectionStrategy} from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy, inject, OnInit} from '@angular/core';
 import { RouterOutlet } from "@angular/router";
 import { Header } from "./shared/header/header";
 import { Footer } from "./shared/footer/footer";
+import { MovieService } from './services/movie-service';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +11,11 @@ import { Footer } from "./shared/footer/footer";
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })  
-export class App{}
+export class App implements OnInit {
+  private movieService = inject(MovieService);
+
+  ngOnInit() {
+    this.movieService.getGenres().subscribe();
+  }
+
+}

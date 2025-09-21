@@ -1,1 +1,11 @@
-<p>login works!</p>
+<div class="login-wrapper">
+    <app-logo [width]="3.6" [height]="3.6" [backgroundColor]="'var(--third-color)'" [color]="'var(--secondary-color)'"></app-logo>
+    <h3>Inicia sesion en tu cuenta de MindFlix</h3>
+    <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="username">Nombre de usuario:</label>
+            <input type="username" id="username" name="username" formControlName="username">
+        </div>
+        <button type="submit">Iniciar sesion</button>
+    </form>
+</div>

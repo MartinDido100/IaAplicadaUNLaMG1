@@ -1,0 +1,120 @@
+@import '../../mixins';
+
+.recommendations {
+    @include flex-container(column, center, center, 4rem);
+    width: 100%;
+    padding-top: 6rem;
+}
+
+.title {
+    text-align: center;
+
+    h2 {
+        font-size: 4rem;
+        font-weight: 700;
+        color: var(--third-color);
+
+        span {
+            font-size: 3.6rem;
+            color: var(--primary-color);
+        }
+    }
+
+    span {
+        font-size: 1.3rem;
+        color: #737373;
+    }
+}
+
+.gemini-prompt{
+    @include flex-container(column, center, center, 2rem);
+    background: var(--secondary-color);
+    padding: 2.5rem 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 56rem;
+
+    h3{
+        font-size: 1.8rem;
+    }
+}
+
+.ia-form{
+    width: 100%;
+    @include flex-container(column, center, center, 3rem);
+}
+
+.form-field{
+    @include flex-container(column, flex-start, center, 1.5rem);
+    width: 100%;
+
+    & textarea {
+        width: 100%;
+        min-height: 10rem;
+        padding: 1rem;
+        font-size: 1.2rem;
+        border: 2px solid #e5e7eb;
+        border-radius: .5rem;
+        resize: none;
+        field-sizing: content;
+
+        &:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+        }
+    }
+}
+
+.form-label{
+    font-size: 1.4rem;
+    color: var(--third-color);
+    font-weight: 600;
+}
+
+.radio-group{
+    @include flex-container(row, center, flex-start, 1.3rem);
+    flex-wrap: wrap;
+    border: 2px solid #e5e7eb;
+    padding: 1rem;
+    border-radius: 2rem;
+
+    input[type="checkbox"]{
+        display: none;
+    }
+
+    & label{
+        padding: .5rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+
+        &:hover {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border-color: var(--primary-color);
+        }
+    }
+}
+
+.radio-group input[type="checkbox"]:checked + label,
+.radio-group label:has(input[type="checkbox"]:checked) {
+  background: var(--primary-color, #8b5cf6);
+  color: #fff;
+}
+
+button{
+    background-color: var(--third-color);
+    color: var(--secondary-color);
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        opacity: 0.86;
+    }
+}

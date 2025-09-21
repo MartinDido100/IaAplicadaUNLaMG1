@@ -7,25 +7,25 @@ export interface RecommendationPrompt {
 }
 
 export enum Duration {
-    SHORT = "short",
-    MEDIUM = "medium",
-    LONG = "long"
+    SHORT = "corta",
+    MEDIUM = "media",
+    LONG = "larga"
 }
 
 export enum Audience {
-    CHILDREN = "children",
-    FAMILY = "family",
-    TEENS = "teens",
-    ADULTS = "adults"
+    CHILDREN = "niños",
+    FAMILY = "familia",
+    TEENS = "adolescentes",
+    ADULTS = "adultos"
 }
 
 export enum Mood {
-    HAPPY = "happy",
-    SAD = "sad",
-    EXCITED = "excited",
-    ROMANTIC = "romantic",
-    SCARY = "scary",
-    REFLECTIVE = "reflective",
-    INSPIRED = "inspired",
-    EPIC = "epic",
+    HAPPY = "feliz",
+    SAD = "triste",
+    EXCITED = "emocionado",
+    ROMANTIC = "romántico",
+    SCARY = "aterrador",
+    REFLECTIVE = "reflexivo",
+    INSPIRED = "inspirado",
+    EPIC = "epico",
 }
