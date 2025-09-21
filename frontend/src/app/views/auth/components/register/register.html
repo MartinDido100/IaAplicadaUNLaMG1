@@ -1,1 +1,15 @@
-<p>register works!</p>
+<div class="login-wrapper">
+    <app-logo [width]="3.6" [height]="3.6" [backgroundColor]="'var(--third-color)'" [color]="'var(--secondary-color)'"></app-logo>
+    <h3>Registrar una cuenta de MindFlix</h3>
+    <form class="login-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="username">Nombre de usuario:</label>
+            <input type="username" id="username" name="username" formControlName="username">
+        </div>
+        <div class="form-group">
+            <label for="email">Correo electrónico:</label>
+            <input type="email" id="email" name="email" formControlName="email">
+        </div>
+        <button type="submit">Registrar</button>
+    </form>
+</div>

@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { Movie } from '../../interfaces/Movie';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { Genre, Movie } from '../../interfaces/Movie';
 import { DatePipe } from '@angular/common';
+import { MovieService } from '../../services/movie-service';
 
 @Component({
   selector: 'app-movie-card',
@@ -12,5 +13,11 @@ import { DatePipe } from '@angular/common';
 })
 export class MovieCard {
   movie = input<Movie>();
-  genres = ["Action", "Drama", "Comedy"];
+  private readonly movieService = inject(MovieService);
+
+  getGenres(genreIds: number[] | undefined) {
+    if (!genreIds) return [];
+    return this.movieService.genres().filter(genre => genreIds.includes(genre.id));
+  }
+
 }

@@ -164,3 +164,57 @@ Usuario: Ahora agrega toda esta conversacion al archivo de conversacion_log resp
 Copilot: Conversación agregada siguiendo el formato solicitado.
 
 ---
+
+Fecha: 20 y 21 de septiembre de 2025
+
+Usuario: En el 2do form field necesito mostrar cada uno de los enums del estado de animo
+
+Copilot: Usa @for (mood of moods; track $index) y en el componente TS: moods = Object.values(Mood);
+
+Usuario: A este form hacele un reactive forms de angular respetando los fields
+
+Copilot: Te propongo el uso de FormGroup y FormArray en el TS y el HTML, con los inputs usando formArrayName y [formControlName].
+
+Usuario: usa formarray name en los inputs
+
+Copilot: Ejemplo en el HTML:
+```
+<input type="checkbox" [formControlName]="$index" formArrayName="moods">
+```
+
+Usuario: Hace que cuando los input checkbox estan checked que su label tenga fondo violeta
+
+Copilot: Usa el CSS:
+```
+.radio-group label:has(input[type="checkbox"]:checked) {
+  background: var(--primary-color, #8b5cf6);
+  color: #fff;
+}
+```
+Y pon el input dentro del label.
+
+Usuario: Se me pinta el label siguiente
+
+Copilot: El input debe estar dentro del label para que el selector funcione correctamente.
+
+Usuario: Corregimelo
+
+Copilot: Corrijo el CSS y confirmo la estructura HTML correcta para los checkboxes.
+
+Usuario: en el html decia
+
+Copilot: El input debe estar dentro del label, así:
+```
+<label>
+  <input type="checkbox" ... />
+  {{ mood }}
+</label>
+```
+
+Usuario: hacelo
+
+Copilot: Modifico el HTML para que todos los inputs checkbox estén dentro de su label.
+
+¿Quieres que registre automáticamente futuras conversaciones?
+
+---
