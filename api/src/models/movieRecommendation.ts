@@ -1,25 +1,25 @@
 export enum Duration {
-  SHORT = 'corta',
-  MEDIUM = 'media',
-  LONG = 'larga'
+  SHORT = "corta",
+  MEDIUM = "media",
+  LONG = "larga",
 }
 
 export enum Audience {
-  CHILDREN = 'niños',
-  FAMILY = 'familia',
-  TEENS = 'adolescentes',
-  ADULTS = 'adultos'
+  CHILDREN = "niños",
+  FAMILY = "familia",
+  TEENS = "adolescentes",
+  ADULTS = "adultos",
 }
 
 export enum Mood {
-  HAPPY = 'feliz',
-  SAD = 'triste',
-  EXCITED = 'emocionado',
-  ROMANTIC = 'romántico',
-  SCARY = 'aterrador',
-  REFLECTIVE = 'reflexivo',
-  INSPIRED = 'inspirado',
-  EPIC = 'epico'
+  HAPPY = "feliz",
+  SAD = "triste",
+  EXCITED = "emocionado",
+  ROMANTIC = "romántico",
+  SCARY = "aterrador",
+  REFLECTIVE = "reflexivo",
+  INSPIRED = "inspirado",
+  EPIC = "epico",
 }
 
 export interface RecommendationPromptDto {
@@ -31,5 +31,12 @@ export interface RecommendationPromptDto {
 }
 
 export interface RecommendationOutput {
-  recommendedMovies: string[];
+  movies: RecommendedMovie[];
+}
+
+export interface RecommendedMovie {
+  title: string;
+  date: string;
+  imdbId: string;
+  reason: string;
 }
