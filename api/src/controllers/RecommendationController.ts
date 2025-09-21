@@ -1,15 +1,27 @@
 import type { Request, Response } from 'express';
-import { MovieService } from '../services/MovieService.js';
+import { GeminiRecommenderServiceImpl, MovieService } from '../services/index.js';
 import { Router } from 'express'
+import type { MovieRecommendationService } from '../services/interfaces/index.js';
+import type { RecommendationPromptDto } from '../models/movieRecommendation.js';
+import HttpStatus from 'http-status';
  
 export const recommendationRouter: Router = Router();
+
+const movieService: MovieService = new MovieService();
+const movieRecommendationService: MovieRecommendationService = new GeminiRecommenderServiceImpl();
+
+recommendationRouter.post('/:userId/recommend', async (req: Request<any, any, RecommendationPromptDto>, res: Response) => {
+  const payload: RecommendationPromptDto = req.body;
+
+  const response = await movieRecommendationService.recommendMovies(payload);
+
+  res.status(HttpStatus.OK).json(response);
+});
 
 recommendationRouter.get('/:userId/:movieId', async (req: Request, res: Response): Promise<void> => {
   const { userId, movieId } = req.params;
   const movieIdNumber: number = Number(movieId);
-  
-  const movieService = new MovieService();
-  
+    
   try {
     console.log(`Getting movie ${movieIdNumber} for user ${userId}`);
     const movie = await movieService.getMovieById(movieIdNumber);
