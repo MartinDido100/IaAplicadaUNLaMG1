@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Mood, Audience, Duration } from '../../interfaces/Recommendation';
 import { TitleCasePipe } from '@angular/common';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MovieService } from '../../services/movie-service';
+import { RecommendationService } from '../../services/recommendation';
+import { Spinner } from '../../shared/spinner/spinner';
 
 @Component({
   selector: 'app-recommendations',
-  imports: [TitleCasePipe,ReactiveFormsModule],
+  imports: [TitleCasePipe,ReactiveFormsModule,Spinner],
   templateUrl: './recommendations.html',
   styleUrl: './recommendations.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -14,6 +16,8 @@ import { MovieService } from '../../services/movie-service';
 export class Recommendations {
   private readonly fb = inject(FormBuilder);
   readonly movieService = inject(MovieService);
+  private readonly rS = inject(RecommendationService);
+  loading = signal(false);
 
   moods = Object.values(Mood);
   audiences = Object.values(Audience);
@@ -22,7 +26,7 @@ export class Recommendations {
 
   constructor() {
     this.iaForm = this.fb.group({
-      textPrompt: [''],
+      textPrompt: ['', [Validators.required]],
       genres: this.fb.array([]),
       moods: this.fb.array([]),
       audiences: this.fb.array([]),
@@ -41,9 +45,12 @@ export class Recommendations {
     }
   }
 
-    onSubmit() {
+  onSubmit() {
     if (this.iaForm.valid) {
-      console.log(this.iaForm.value);
+      this.loading.set(true);
+      this.rS.getRecommendations(this.iaForm.value).subscribe(response => {
+        this.loading.set(false);
+      });
     }
   }
 }

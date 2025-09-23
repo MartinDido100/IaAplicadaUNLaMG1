@@ -1,4 +1,4 @@
-import { Component, signal, ChangeDetectionStrategy, inject, OnInit} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit} from '@angular/core';
 import { RouterOutlet } from "@angular/router";
 import { Header } from "./shared/header/header";
 import { Footer } from "./shared/footer/footer";

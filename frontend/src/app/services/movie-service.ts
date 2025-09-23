@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { Genre, Movie, MovieApiResponse } from '../interfaces/Movie';
+import { Genre, MovieApiResponse } from '../interfaces/Movie';
 import { environment } from '../../environments/environment';
 import { map, tap } from 'rxjs';
 
@@ -13,10 +13,13 @@ export class MovieService {
     Authorization: `Bearer ${environment.movieApiToken}`,
   });
   genres = signal<Genre[]>([]);
+  private readonly languageParams = {
+    language: 'es'
+  };
 
   getPopularMovies() {
     const url = `${environment.movieApiUrl}/movie/popular`;
-    return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders }).pipe(
+    return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: this.languageParams }).pipe(
       map(response => response.results.map(movie => {
         return { ...movie, poster_path: `${environment.imageBaseUrl}${movie.poster_path}` };
       }).slice(0, 4)),
@@ -25,7 +28,7 @@ export class MovieService {
 
   getTopRatedMovies() {
     const url = `${environment.movieApiUrl}/movie/top_rated`;
-    return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders }).pipe(
+    return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: this.languageParams }).pipe(
       map(response => response.results.map(movie => {
         return { ...movie, poster_path: `${environment.imageBaseUrl}${movie.poster_path}` };
       }).slice(0, 4)),
@@ -34,10 +37,7 @@ export class MovieService {
 
   getGenres() {
     const url = `${environment.movieApiUrl}/genre/movie/list`;
-    const queryParams = {
-      language: 'es'
-    };
-    return this.http.get<{ genres: { id: number; name: string }[] }>(url, { headers: this.apiHeaders, params: queryParams }).pipe(
+    return this.http.get<{ genres: { id: number; name: string }[] }>(url, { headers: this.apiHeaders, params: this.languageParams }).pipe(
       map(response => response.genres),
       tap(genres => this.genres.set(genres))
     );

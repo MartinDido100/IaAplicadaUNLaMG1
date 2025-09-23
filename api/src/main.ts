@@ -3,12 +3,19 @@ import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { router } from "./router/index.js";
 import { ErrorHandling } from "./utils/errors.js";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware para parsear JSON
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // Rutas
 app.use("/api", router);

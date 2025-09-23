@@ -1,4 +1,4 @@
-<section class="recommendations">
+    <section class="recommendations">
     <div class="title">
         <h2>Tu proxima pelicula <br> <span>te esta esperando</span> </h2>
         <span>Descubre un universo cinematográfico infinito. Explora, filtra y encuentra <br> exactamente lo que buscas en nuestro catálogo inteligente.</span>
@@ -18,10 +18,10 @@
                 <div class="radio-group">
                 @for (genre of movieService.genres(); track $index) {
                         <label>
-                            <input type="checkbox" name="genre" [value]="genre" (change)="onCheckboxChange($event, 'genres')" />
+                            <input type="checkbox" name="genre" [value]="genre.name" (change)="onCheckboxChange($event, 'genres')" />
                             {{ genre.name }}
                         </label>
-                    }
+                }
                 </div>
             </div>
 
@@ -61,7 +61,14 @@
                 </div>
             </div>
 
-            <button type="submit">Buscar peliculas con IA ✨</button>
+            @if (loading()) {
+                <app-spinner [height]="30" [width]="30"></app-spinner>
+            }
+            @else {
+                <button>
+                    <span>Buscar peliculas con IA ✨</span>
+                </button>
+            }
         </form>
     </div>
 </section>
