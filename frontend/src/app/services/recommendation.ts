@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { RecommendationPrompt } from '../interfaces/Recommendation';
+import { RecommendationPrompt, RecommendationResponse } from '../interfaces/Recommendation';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -11,6 +11,6 @@ export class RecommendationService {
 
   getRecommendations(prompt: RecommendationPrompt) {
     const url = `${environment.apiUrl}/recommendations/1/recommend`
-    return this.http.post(url,prompt); 
+    return this.http.post<RecommendationResponse>(url,prompt); 
   }
 }

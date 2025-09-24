@@ -1,3 +1,5 @@
+import { Movie } from "./Movie";
+
 export interface RecommendationPrompt {
     textPrompt: string;
     genres: string[];
@@ -28,4 +30,8 @@ export enum Mood {
     REFLECTIVE = "reflexivo",
     INSPIRED = "inspirado",
     EPIC = "epico",
+}
+
+export interface RecommendationResponse {
+    movies: Movie[];
 }

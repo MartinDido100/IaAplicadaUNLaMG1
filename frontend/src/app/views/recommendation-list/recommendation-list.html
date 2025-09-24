@@ -1,0 +1,14 @@
+<div class="wrapper">
+    <span>Tus Peliculas Perfectas</span>
+    <p>✨ Basado en tu estado de animo, estas son tus recomendaciones ✨</p>
+    <div class="movies-list">
+        @for (movie of data.recommendations; track $index) {
+            <div class="movie-card">
+                <div class="movie-info">
+                    <h3>{{ movie.title }}</h3>
+                    <p>{{ movie.overview }}</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
