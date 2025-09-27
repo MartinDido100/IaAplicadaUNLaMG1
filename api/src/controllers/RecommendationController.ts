@@ -1,3 +1,4 @@
+import debug from "debug";
 import type { Request, Response } from "express";
 import { Router } from "express";
 import HttpStatus from "http-status";
@@ -13,11 +14,14 @@ export const recommendationRouter: Router = Router();
 const tmdbService = new TmdbService();
 const movieRecommendationService: MovieRecommendationService =
   new GeminiRecommenderServiceImpl(tmdbService);
+const log = debug("app:recommendationController");
 
 recommendationRouter.post(
-  "/:userId/recommend",
+  "/",
   async (req: Request<any, any, RecommendationPromptDto>, res: Response) => {
     const payload: RecommendationPromptDto = req.body;
+
+    log("Request received for movie recommendation");
 
     const response = await movieRecommendationService.recommendMovies(payload);
 
@@ -27,17 +31,12 @@ recommendationRouter.post(
 
 /**
  * @swagger
- * /api/recommendations/{userId}/recommend:
+ * /api/recommendations:
  *   post:
  *     summary: Recommend movies for a user
+ *     security:
+ *       - bearerAuth: []
  *     description: This endpoint recommends movies based on the provided payload.
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the user
  *     requestBody:
  *       required: true
  *       content:

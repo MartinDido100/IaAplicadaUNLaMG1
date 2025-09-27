@@ -1,8 +1,9 @@
+import cors from "cors";
 import express from "express";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { router } from "./router/index.js";
-import { ErrorHandling } from "./utils/errors.js";
+import { Constants, ErrorHandling } from "./utils/index.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,6 +14,14 @@ app.use(express.json());
 // Rutas
 app.use("/api", router);
 app.use(ErrorHandling);
+
+app.use(
+  cors({
+    origin: Constants.CORS_WHITELIST,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "linear-signature"],
+  }),
+);
 
 app.get("/", (req, res) => {
   res.send("¡Hola desde Express + TypeScript!");
@@ -33,6 +42,15 @@ const swaggerOptions = {
         url: "http://localhost:3000",
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
   apis: ["./src/controllers/**/*.ts"],
 };

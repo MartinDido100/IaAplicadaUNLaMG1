@@ -64,5 +64,5 @@ export function ErrorHandling(
   }
   return res
     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-    .json({ message: error.message, code: 500 });
+    .json({ message: error.stack, code: 500 });
 }

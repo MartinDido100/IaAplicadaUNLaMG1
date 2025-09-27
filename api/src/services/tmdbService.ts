@@ -7,12 +7,77 @@ export class TmdbService {
   constructor() {}
 
   async findMoviesByImdbIds(recommendedMovies: RecommendedMovie[]) {
-    const promises: Promise<AxiosResponse>[] = recommendedMovies.map((movie) =>
-      tmdbClient.get(`/find/${movie.imdbId}`, {
+    // Adding detailed time measurements for each step
+    console.time("Overall Execution");
+
+    // Adding detailed logs to identify potential bottlenecks
+    console.log(
+      "Starting findMoviesByImdbIds with recommendedMovies:",
+      recommendedMovies,
+    );
+
+    console.time("Step 1: Creating Promises");
+    const promises = recommendedMovies.map((movie) => {
+      console.log(`Creating promise for movie with IMDb ID: ${movie.imdbId}`);
+      return tmdbClient.get(`/find/${movie.imdbId}`, {
         params: { external_source: "imdb_id" },
+      });
+    });
+    console.log("Number of promises created:", promises.length);
+    console.timeEnd("Step 1: Creating Promises");
+
+    console.time("Step 2: API Requests");
+    const results = await Promise.allSettled(promises);
+    console.log("Number of API requests processed:", results.length);
+    console.timeEnd("Step 2: API Requests");
+
+    results.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        console.log(`Request ${index} succeeded.`);
+      } else {
+        console.error(`Request ${index} failed.`);
+      }
+    });
+
+    console.time("Step 3: Processing Results");
+    const response = await Promise.all(
+      results.map(async (res, i) => {
+        if (res.status === "fulfilled") {
+          const rawData = res.value.data;
+          console.log(`Processing result ${i}.`);
+          const movieData = rawData.movie_results?.[0];
+          if (!movieData) {
+            console.warn(`No movie_results found for result ${i}.`);
+            return null;
+          }
+          return this.mapToMovie(movieData);
+        } else {
+          console.error(`Skipping result ${i} due to error.`);
+          throw new Error(`Error fetching movie`);
+        }
+      }),
+    );
+    console.log("Number of results processed:", response.length);
+    console.timeEnd("Step 3: Processing Results");
+
+    console.timeEnd("Overall Execution");
+
+    return { response };
+  }
+
+  async findMoviesByName(recommendedMovies: RecommendedMovie[]) {
+    const promises: Promise<AxiosResponse>[] = recommendedMovies.map((movie) =>
+      tmdbClient.get("/search/movie", {
+        params: { query: movie.title },
       }),
     );
 
+    const response = await this.handlePromises(promises);
+
+    return { response };
+  }
+
+  private async handlePromises(promises: Promise<AxiosResponse>[]) {
     const results = await Promise.allSettled(promises);
     const response = await Promise.all(
       results.map(async (res, i) => {
@@ -32,7 +97,7 @@ export class TmdbService {
         }
       }),
     );
-    return { response };
+    return response;
   }
 
   private mapToMovie(rawData: any): Movie | null {
@@ -153,5 +218,20 @@ export class TmdbService {
         iso_639_1: lang.iso_639_1,
         name: lang.name || "",
       }));
+  }
+
+  async processMovies(recommendedMovies: RecommendedMovie[]) {
+    // Adding time measurement for performance analysis
+    console.time("Total Processing Time");
+
+    const imdbResponse = await this.findMoviesByImdbIds(recommendedMovies);
+    console.log("IMDB Response:", imdbResponse);
+
+    // Assuming the main processing function is here
+    console.time("Main Processing");
+    // Call the main processing logic
+    console.timeEnd("Main Processing");
+
+    console.timeEnd("Total Processing Time");
   }
 }
