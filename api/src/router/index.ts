@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { authRouter } from "../controllers/authController.js";
-import { recommendationRouter } from "../controllers/recommendationController.js";
+import { authRouter, recommendationRouter } from "../controllers/index.js";
 import { withAuth } from "../utils/auth.js";
 
 export const router = Router();

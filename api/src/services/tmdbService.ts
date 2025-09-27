@@ -1,6 +1,5 @@
 import type { AxiosResponse } from "axios";
-import type { Movie } from "../models/movie.js";
-import type { RecommendedMovie } from "../models/movieRecommendation.js";
+import type { Movie, RecommendedMovie } from "../models/index.js";
 import { tmdbClient } from "../utils/index.js";
 
 export class TmdbService {
