@@ -1,0 +1,58 @@
+@import '../../../../mixins';
+
+h3{
+    font-size: 1.6rem;
+    color: var(--third-color);
+}
+
+.login-wrapper{
+    @include flex-container(column, center, center, 1.7rem);
+    padding: 24px;
+    border-radius: 1rem;
+    background: #f5f5f5;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-form{
+    @include flex-container(column, flex-start, flex-start, 1.6rem);
+    width: 100%;
+}
+
+.form-group{
+    @include flex-container(column, flex-start, flex-start, .8rem);
+    width: 100%;
+
+    & input{
+        width: 100%;
+        padding: .6rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: .5rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    & input:focus{
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+    }
+
+    & label{
+        font-size: 1rem;
+        color: var(--third-color);
+        font-weight: 600;
+    }
+}
+
+button{
+    background-color: var(--third-color);
+    color: var(--secondary-color);
+    padding: .8rem 0;
+    width: 100%;
+    font-size: 1.08rem;
+    border-radius: .5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        opacity: 0.86;
+    }
+}

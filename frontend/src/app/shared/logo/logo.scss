@@ -1,0 +1,13 @@
+.svg-container {
+    position: relative;
+    padding: .6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+svg {
+    position: relative;
+    z-index: 2;
+}

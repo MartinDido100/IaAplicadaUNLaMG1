@@ -8,10 +8,7 @@ export interface Movie {
     backdrop_path: string;
   };
   budget: number;
-  genres: {
-    id: number;
-    name: string;
-  }[];
+  genre_ids: number[];
   homepage: string;
   id: number;
   imdb_id: string;
@@ -52,4 +49,9 @@ export interface MovieApiResponse {
   results: Movie[];
   total_pages: number;
   total_results: number;
+}
+
+export interface Genre{
+  id: number;
+  name: string;
 }

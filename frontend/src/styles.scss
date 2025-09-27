@@ -1,3 +1,9 @@
+@use '@angular/cdk' as cdk;
+@import '@angular/cdk/overlay-prebuilt.css';
+
+
+@include cdk.overlay();
+
 * {
   margin: 0;
   padding: 0;
