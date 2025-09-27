@@ -17,21 +17,21 @@ export class MovieService {
     language: 'es'
   };
 
+  getImage(posterPath: string): string {
+    return `${environment.imageBaseUrl}${posterPath}`;
+  }
+
   getPopularMovies() {
     const url = `${environment.movieApiUrl}/movie/popular`;
     return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: this.languageParams }).pipe(
-      map(response => response.results.map(movie => {
-        return { ...movie, poster_path: `${environment.imageBaseUrl}${movie.poster_path}` };
-      }).slice(0, 4)),
+      map(response => response.results.slice(0, 4))
     );
   }
 
   getTopRatedMovies() {
     const url = `${environment.movieApiUrl}/movie/top_rated`;
     return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: this.languageParams }).pipe(
-      map(response => response.results.map(movie => {
-        return { ...movie, poster_path: `${environment.imageBaseUrl}${movie.poster_path}` };
-      }).slice(0, 4)),
+      map(response => response.results.slice(0, 4)),
     );
   }
 

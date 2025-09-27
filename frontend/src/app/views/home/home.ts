@@ -3,6 +3,7 @@ import { MovieCard } from '../../shared/movie-card/movie-card';
 import { MovieService } from '../../services/movie-service';
 import { Movie } from '../../interfaces/Movie';
 import { Recommendations } from "../recommendations/recommendations";
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,7 @@ export class Home implements OnInit{
   popularMovies = signal<Movie[]>([]);
   topRatedMovies = signal<Movie[]>([]);
   readonly movieService = inject(MovieService);
+  readonly authS = inject(Auth)
 
   ngOnInit(): void {
     this.movieService.getPopularMovies().subscribe(movies => {

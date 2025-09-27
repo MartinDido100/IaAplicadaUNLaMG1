@@ -3,6 +3,7 @@ import { RouterOutlet } from "@angular/router";
 import { Header } from "./shared/header/header";
 import { Footer } from "./shared/footer/footer";
 import { MovieService } from './services/movie-service';
+import { Auth } from './services/auth';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +14,11 @@ import { MovieService } from './services/movie-service';
 })  
 export class App implements OnInit {
   private movieService = inject(MovieService);
+  readonly authService = inject(Auth);
+
 
   ngOnInit() {
+    this.authService.persistLogin();
     this.movieService.getGenres().subscribe();
   }
 

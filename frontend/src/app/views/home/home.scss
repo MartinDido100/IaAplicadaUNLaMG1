@@ -2,6 +2,7 @@
 
 .home{
   @include flex-container(column, center, flex-start, 6rem);
+  padding-top: 8rem;
 }
 
 .trend-movies, .relevant-movies{

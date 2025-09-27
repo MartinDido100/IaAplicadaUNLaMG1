@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core
 import { Genre, Movie } from '../../interfaces/Movie';
 import { DatePipe } from '@angular/common';
 import { MovieService } from '../../services/movie-service';
+import { PosterPipe } from '../../pipes/poster-pipe';
 
 @Component({
   selector: 'app-movie-card',
-  imports: [DatePipe],
+  imports: [DatePipe,PosterPipe],
   templateUrl: './movie-card.html',
   styleUrl: './movie-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -41,3 +41,11 @@ img, picture, video, canvas, svg {
 .spacer{
   flex-grow: 1;
 }
+
+.cdk-dialog-container{
+  outline: none;
+}
+
+.cdk-overlay-container{
+  z-index: 999999;
+}

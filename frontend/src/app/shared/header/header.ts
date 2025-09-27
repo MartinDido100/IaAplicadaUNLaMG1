@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-header',
@@ -9,5 +10,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Header {
+  auth = inject(Auth);
 
+  logout() {
+    this.auth.logout();
+  }
 }

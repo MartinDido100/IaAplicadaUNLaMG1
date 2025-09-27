@@ -1,36 +1,97 @@
 @import '../../mixins';
 
-.wrapper{
-    @include flex-container(column, center, center, 1rem);
-    background: var(--secondary-color);
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
+.wrapper {
+  @include flex-container(column, center, center, 1.5rem);
+  background: var(--secondary-color);
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  margin: auto;
+  position: relative;
+  z-index: 10003;
 }
 
-.title{
-    font-size: 1.8rem;
-    font-weight: bold;
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  text-align: center;
 }
 
-.description{
-    font-size: 1.2rem;
-    text-align: center;
-    color: #737373;
-    font-weight: 600;
+.description {
+  font-size: 1.1rem;
+  text-align: center;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 1rem;
 }
 
-.movies-list{
-    @include flex-container(column, center, center, 1rem);
-    width: 100%;
-    height: 400px;
-    overflow-y: auto;
+.movies-list {
+  @include flex-container(column, flex-start, center, 2rem);
+  width: 100%;
+  max-height: 37rem;
+  overflow-y: auto;
+  padding: .5rem;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.movie-card{
-    @include flex-container(row, center, center, 0.5rem);
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
+.movie-card {
+  @include flex-container(row, flex-start, flex-start, 1.5rem);
+  border-radius: 1rem;
+  width: 100%;
+  padding: 1.2rem;
+  background: #f8f5ff;
+  border: 1px solid rgba(138, 92, 246, 0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.movie-card img {
+  height: 14rem;
+  border-radius: 0.8rem;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.movie-info {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+
+  .movie-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #222;
+  }
+
+  .movie-description {
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #555;
+  }
+}
+
+.movie-numbers{
+    font-size: 0.875rem;
+    color: #a7a5a5;
+    @include flex-container(row, flex-start, center, 1rem);
+
+    & span{
+        @include flex-container(row, center, center, 0.3rem);
+    }
 }

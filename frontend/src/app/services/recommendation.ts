@@ -10,7 +10,7 @@ export class RecommendationService {
   private readonly http = inject(HttpClient);
 
   getRecommendations(prompt: RecommendationPrompt) {
-    const url = `${environment.apiUrl}/recommendations/1/recommend`
+    const url = `${environment.apiUrl}/recommendations`
     return this.http.post<RecommendationResponse>(url,prompt); 
   }
 }

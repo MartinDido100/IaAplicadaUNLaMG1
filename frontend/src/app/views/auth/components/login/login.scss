@@ -14,7 +14,7 @@ h3{
 }
 
 .login-form{
-    @include flex-container(column, flex-start, flex-start, 1.6rem);
+    @include flex-container(column, flex-start, center, 1.6rem);
     width: 100%;
 }
 

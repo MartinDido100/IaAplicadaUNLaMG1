@@ -1,11 +1,15 @@
 <div class="login-wrapper">
     <app-logo [width]="3.6" [height]="3.6" [backgroundColor]="'var(--third-color)'" [color]="'var(--secondary-color)'"></app-logo>
     <h3>Inicia sesion en tu cuenta de MindFlix</h3>
-    <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form class="login-form" [formGroup]="form" (ngSubmit)="login()">
         <div class="form-group">
-            <label for="username">Nombre de usuario:</label>
-            <input type="username" id="username" name="username" formControlName="username">
+            <label for="email">Correo electronico:</label>
+            <input type="email" id="email" name="email" formControlName="email">
         </div>
-        <button type="submit">Iniciar sesion</button>
+        @if(loading()){
+            <app-spinner [height]="30" [width]="30"></app-spinner>
+        }@else{
+            <button type="submit">Iniciar sesion</button>
+        }
     </form>
 </div>

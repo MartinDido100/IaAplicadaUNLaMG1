@@ -1,7 +1,9 @@
 <div class="home">
-    <div class="ia-container">
-        <app-recommendations></app-recommendations>
-    </div>
+    @if (authS.user) {
+        <div class="ia-container">
+            <app-recommendations></app-recommendations>
+        </div>
+    }
 
     @if (topRatedMovies()) {
         <div class="relevant-movies">

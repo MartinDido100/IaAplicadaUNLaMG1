@@ -23,12 +23,21 @@
     @include flex-container(row, stretch, center, 1rem);
     padding: 1.6rem 3rem;
     border-bottom: #e5e5e5 1px solid;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: white;
+    z-index: 9999;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 a{
     font-weight: 600;
     @include flex-container(row, center, center, 0.2rem);
     padding: .6rem 10px;
+    cursor: pointer;
 
     & svg{
         width: 1.2rem;
@@ -62,4 +71,11 @@ a{
 
 .nav-tabs{
     @include flex-container(row, center, center, 0.5rem);
+}
+
+.welcome{
+    margin-right: 1rem;
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    font-weight: 700;
 }
