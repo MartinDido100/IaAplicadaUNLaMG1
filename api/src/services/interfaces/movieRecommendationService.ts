@@ -1,5 +1,4 @@
-import type { RecommendationDto } from "../../models/movie.js";
-import type { RecommendationPromptDto } from "../../models/movieRecommendation.js";
+import type { RecommendationDto, RecommendationPromptDto } from "../../models/index.js";
 
 export interface MovieRecommendationService {
   recommendMovies(
