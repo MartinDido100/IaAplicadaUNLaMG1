@@ -172,7 +172,6 @@ export class Recommendations  implements OnInit{
       },
       width: '80%',
       maxWidth: '60rem',
-      height: 'auto',
     })
   }
 

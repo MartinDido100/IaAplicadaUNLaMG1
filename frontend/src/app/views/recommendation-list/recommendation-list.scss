@@ -1,6 +1,36 @@
+@import '../../mixins';
+
 .wrapper{
+    @include flex-container(column, center, center, 1rem);
     background: var(--secondary-color);
     padding: 2rem;
     border-radius: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+.title{
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.description{
+    font-size: 1.2rem;
+    text-align: center;
+    color: #737373;
+    font-weight: 600;
+}
+
+.movies-list{
+    @include flex-container(column, center, center, 1rem);
+    width: 100%;
+    height: 400px;
+    overflow-y: auto;
+}
+
+.movie-card{
+    @include flex-container(row, center, center, 0.5rem);
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
