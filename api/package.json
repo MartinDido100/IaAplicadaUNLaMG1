@@ -7,7 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/main.ts",
-    "prettier": "prettier --write 'src/**/*.{ts,js}'"
+    "prettier": "prettier --write 'src/**/*.{ts,js}'",
+    "debug": "DEBUG=app:* tsx src/main.ts"
   },
   "author": "",
   "license": "ISC",
@@ -26,8 +27,10 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
+    "@types/debug": "^4.1.12",
     "axios": "^1.12.2",
     "cors": "^2.8.5",
+    "debug": "^4.4.3",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "firebase-admin": "^13.5.0",

@@ -1,8 +1,14 @@
 export interface AuthDataDto {
   name: string;
-  email: string;
 }
 
-export interface TokenDto {
+export interface AuthData {
+  email: string;
+  name: string;
+}
+
+export interface UserDto {
   token: string;
+  email: string;
+  displayName: string;
 }
