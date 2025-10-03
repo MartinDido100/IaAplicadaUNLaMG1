@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Pipe({
   name: 'poster'
@@ -6,7 +7,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class PosterPipe implements PipeTransform {
 
   transform(value: string | undefined): unknown {
-    return value ? `https://image.tmdb.org/t/p/w500${value}` : null;
+    const imageBaseUrl = environment.imageBaseUrl;
+    return value ? `${imageBaseUrl}${value}` : null;
   }
 
 }

@@ -24,14 +24,14 @@ export class MovieService {
   getPopularMovies() {
     const url = `${environment.movieApiUrl}/movie/popular`;
     return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: this.languageParams }).pipe(
-      map(response => response.results.slice(0, 4))
+      map(response => response.results.slice(0, 5))
     );
   }
 
   getTopRatedMovies() {
     const url = `${environment.movieApiUrl}/movie/top_rated`;
     return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: this.languageParams }).pipe(
-      map(response => response.results.slice(0, 4)),
+      map(response => response.results.slice(0, 5)),
     );
   }
 

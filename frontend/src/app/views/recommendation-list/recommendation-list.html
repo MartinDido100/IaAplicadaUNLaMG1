@@ -4,7 +4,7 @@
     <div class="movies-list">
         @for (movie of data.recommendations; track $index) {
             <div class="movie-card">
-                <img [src]="movie.poster_path | poster" alt="{{ movie.title }}">
+                <img [src]="movie.poster_path | poster" alt="{{ movie.title }}" loading="lazy">
                 <div class="movie-info">
                     <h3 class="movie-title">{{ movie.title }}</h3>
                     <p class="movie-description">{{ movie.overview }}</p>
