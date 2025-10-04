@@ -18,6 +18,7 @@ export class Login {
   private router = inject(Router);
   form: FormGroup;
   loading = signal(false);
+  loginError = signal('');
 
   constructor() {
     this.form = this.fb.group({
@@ -33,8 +34,11 @@ export class Login {
           this.loading.set(false);
           this.router.navigate(['/']);
         },
-        error: () => {
+        error: (e) => {
           this.loading.set(false);
+          if (e.error.code === 404) {
+            this.loginError.set('No se encontró un usuario con ese correo electrónico.');
+          }
         }
       });
     }
