@@ -19,7 +19,7 @@ export class TmdbService {
     const promises = recommendedMovies.map((movie) => {
       console.log(`Creating promise for movie with IMDb ID: ${movie.imdbId}`);
       return tmdbClient.get(`/find/${movie.imdbId}`, {
-        params: { external_source: "imdb_id" },
+        params: { external_source: "imdb_id", language: "es-ES" },
       });
     });
     console.log("Number of promises created:", promises.length);
@@ -67,7 +67,7 @@ export class TmdbService {
   async findMoviesByName(recommendedMovies: RecommendedMovie[]) {
     const promises: Promise<AxiosResponse>[] = recommendedMovies.map((movie) =>
       tmdbClient.get("/search/movie", {
-        params: { query: movie.title },
+        params: { query: movie.title, language: "es-ES" },
       }),
     );
 
@@ -114,7 +114,7 @@ export class TmdbService {
           rawData.belongs_to_collection,
         ),
         budget: Number(rawData.budget) || 0,
-        genres: this.mapGenres(rawData.genres),
+        genres: this.mapGenres(rawData.genres || rawData.genre_ids),
         homepage: rawData.homepage || "",
         id: rawData.id,
         imdb_id: rawData.imdb_id || "",
@@ -164,17 +164,20 @@ export class TmdbService {
     };
   }
 
-  private mapGenres(rawGenres: any): any[] {
+  private mapGenres(rawGenres: any): number[] {
     if (!Array.isArray(rawGenres)) {
       return [];
     }
 
+    // Si es un array de números (genre_ids)
+    if (rawGenres.length > 0 && typeof rawGenres[0] === "number") {
+      return rawGenres.filter((genreId) => typeof genreId === "number");
+    }
+
+    // Si es un array de objetos (con id y name), extraer solo los IDs
     return rawGenres
       .filter((genre) => genre && typeof genre.id === "number")
-      .map((genre) => ({
-        id: genre.id,
-        name: genre.name || "",
-      }));
+      .map((genre) => genre.id);
   }
 
   private mapProductionCompanies(rawCompanies: any): any[] {
