@@ -56,7 +56,7 @@ recommendationRouter.post(
  *                   backdrop_path: "/2u7zbn8EudG6kLlBzUYqP8RyFU4.jpg"
  *                   belongs_to_collection: null
  *                   budget: 0
- *                   genres: []
+ *                   genres: [28, 12, 14]
  *                   homepage: ""
  *                   id: 122
  *                   imdb_id: ""
@@ -127,17 +127,69 @@ recommendationRouter.post(
  *     Movie:
  *       type: object
  *       properties:
- *         title:
+ *         adult:
+ *           type: boolean
+ *         backdrop_path:
  *           type: string
- *         release_date:
- *           type: string
- *           format: date
- *         imdb_id:
- *           type: string
- *         reason:
- *           type: string
+ *         belongs_to_collection:
+ *           type: object
+ *           nullable: true
+ *         budget:
+ *           type: number
  *         genres:
  *           type: array
  *           items:
+ *             type: number
+ *           description: Array of genre IDs from TMDb
+ *         homepage:
+ *           type: string
+ *         id:
+ *           type: number
+ *         imdb_id:
+ *           type: string
+ *         origin_country:
+ *           type: array
+ *           items:
  *             type: string
+ *         original_language:
+ *           type: string
+ *         original_title:
+ *           type: string
+ *         overview:
+ *           type: string
+ *         popularity:
+ *           type: number
+ *         poster_path:
+ *           type: string
+ *         production_companies:
+ *           type: array
+ *           items:
+ *             type: object
+ *         production_countries:
+ *           type: array
+ *           items:
+ *             type: object
+ *         release_date:
+ *           type: string
+ *           format: date
+ *         revenue:
+ *           type: number
+ *         runtime:
+ *           type: number
+ *         spoken_languages:
+ *           type: array
+ *           items:
+ *             type: object
+ *         status:
+ *           type: string
+ *         tagline:
+ *           type: string
+ *         title:
+ *           type: string
+ *         video:
+ *           type: boolean
+ *         vote_average:
+ *           type: number
+ *         vote_count:
+ *           type: number
  */

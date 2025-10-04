@@ -33,7 +33,7 @@ export interface Movie {
   backdrop_path: string;
   belongs_to_collection: Collection;
   budget: number;
-  genres: Genre[];
+  genres: number[];
   homepage: string;
   id: number;
   imdb_id: string;
