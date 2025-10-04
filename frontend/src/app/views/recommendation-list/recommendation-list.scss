@@ -95,3 +95,15 @@
         @include flex-container(row, center, center, 0.3rem);
     }
 }
+
+.genres{
+    @include flex-container(row, flex-start, center, 0.5rem);
+
+    & .genre-pill{
+        font-size: 0.7rem;
+        border: 1px solid #e5e5e5;
+        padding: 0.2rem 0.6rem;
+        border-radius: 9999px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}

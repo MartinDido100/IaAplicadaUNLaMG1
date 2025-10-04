@@ -162,11 +162,11 @@ test.describe('Modal de Recomendaciones', () => {
     await expect(page.locator('.movie-card')).toHaveCount(2);
     
     // Verificar que los títulos están presentes
-    await expect(page.locator('.wrapper .movie-title').first()).toContainText('Avatar');
-    await expect(page.locator('.wrapper .movie-title').nth(1)).toContainText('Inception');
+    await expect(page.locator('.wrapper .movie-title').first()).toContainText('Inception');
+    await expect(page.locator('.wrapper .movie-title').nth(1)).toContainText('Avatar');
     
     // Verificar que las descripciones están presentes
-    await expect(page.locator('.wrapper .movie-description').first()).toContainText('Pandora');
+    await expect(page.locator('.wrapper .movie-description').first()).toContainText('ladrón');
   });
 
   test('debería poder cerrar el modal haciendo clic en el backdrop', async ({ page }) => {

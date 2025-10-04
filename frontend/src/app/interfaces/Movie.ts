@@ -9,6 +9,7 @@ export interface Movie {
   };
   budget: number;
   genre_ids: number[];
+  genres: number[];
   homepage: string;
   id: number;
   imdb_id: string;

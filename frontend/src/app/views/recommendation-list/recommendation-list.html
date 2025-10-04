@@ -18,6 +18,13 @@
                             {{ movie?.vote_average?.toFixed(1) }}
                         </span>
                     </div>
+                    <div class="genres">
+                        @for (genre of getGenres(movie?.genres); track $index) {
+                            <span class="genre-pill">
+                                {{ genre.name | titlecase }}
+                            </span>
+                        }
+                    </div>
                 </div>
             </div>
         }
