@@ -1,6 +1,9 @@
 import { Router } from "express";
+import {
+  FirebaseAuthRepositoryImpl,
+  FirebaseUserRepositoryImpl,
+} from "../repositories/index.js";
 import { AuthServiceImpl } from "../services/index.js";
-import { FirebaseAuthRepositoryImpl, FirebaseUserRepositoryImpl } from "../repositories/index.js";
 import { validateTokenPresence, verifyToken } from "../utils/auth.js";
 
 const userRepository = new FirebaseUserRepositoryImpl();
@@ -11,28 +14,29 @@ export const authRouter = Router();
 
 authRouter.post("/signup/:email", async (req, res) => {
   const email = req.params.email;
-  const { name } = req.body;
+  const { name, password } = req.body;
 
-  const user = await authService.signup({ email, name });
+  const user = await authService.signup({ email, name, password });
 
   res.status(201).json({
     accessToken: user.accessToken,
     refreshToken: user.refreshToken,
     email: user.email,
-    displayName: user.displayName
+    displayName: user.displayName,
   });
 });
 
 authRouter.post("/login/:email", async (req, res) => {
   const email = req.params.email;
+  const { name, password } = req.body;
 
-  const user = await authService.login({ email, name: "" });
+  const user = await authService.login({ email, name, password });
 
   res.status(200).json({
     accessToken: user.accessToken,
     refreshToken: user.refreshToken,
     email: user.email,
-    displayName: user.displayName
+    displayName: user.displayName,
   });
 });
 

@@ -3,9 +3,10 @@
   "useTabs": false,
   "printWidth": 300,
   "semi": true,
-  "trailingComma": "es5",
+  "trailingComma": "all",
   "singleQuote": true,
   "endOfLine": "lf",
   "importOrder": ["^@?\\w", "^[./]"],
-  "importOrderSeparation": true
+  "importOrderSeparation": true,
+  "arrowParens": "always"
 }
