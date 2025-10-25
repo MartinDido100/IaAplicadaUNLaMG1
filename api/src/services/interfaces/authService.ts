@@ -1,6 +1,9 @@
-import type { AuthDataDto, UserDto } from "../../models/index.js";
+import type { AuthData, RefreshTokenDto, TokenVerifyDto, UserDto } from "../../models/index.js";
 
 export interface AuthService {
-  login(user: AuthDataDto): Promise<UserDto>;
-  signup(user: AuthDataDto): Promise<UserDto>;
+  login(user: AuthData): Promise<UserDto>;
+  signup(user: AuthData): Promise<UserDto>;
+  verifyToken(token: string): Promise<TokenVerifyDto>;
+  refreshAccessToken(refreshTokenDto: RefreshTokenDto): Promise<{ accessToken: string }>;
+  logout(email: string): Promise<void>;
 }

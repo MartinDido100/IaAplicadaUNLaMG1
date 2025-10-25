@@ -38,10 +38,13 @@ export class ForbiddenException extends HttpException {
 
 export class NotFoundException extends HttpException {
   constructor(model?: string) {
-    super(
-      HttpStatus.NOT_FOUND,
-      `Not found.${model ? " Couldn't find " + model : ""}`,
-    );
+    super(HttpStatus.NOT_FOUND, `Not found.${model ? " Couldn't find " + model : ""}`);
+  }
+}
+
+export class DependencyException extends HttpException {
+  constructor(dependencyName?: string) {
+    super(HttpStatus.FAILED_DEPENDENCY, `Dependency Error.`); 
   }
 }
 
@@ -51,18 +54,9 @@ export class ConflictException extends HttpException {
   }
 }
 
-export function ErrorHandling(
-  error: Error,
-  _req: Request,
-  res: Response,
-  _next: NextFunction,
-): Response {
+export function ErrorHandling(error: Error, _req: Request, res: Response, _next: NextFunction): Response {
   if (error instanceof HttpException) {
-    return res
-      .status(error.code)
-      .json({ message: error.message, code: error.code, errors: error.error });
+    return res.status(error.code).json({ message: error.message, code: error.code, errors: error.error });
   }
-  return res
-    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-    .json({ message: error.stack, code: 500 });
+  return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.stack, code: 500 });
 }

@@ -1,80 +1,94 @@
-import { UserRecord } from "firebase-admin/auth";
-import jwt from "jsonwebtoken";
-import type { AuthData, UserDto } from "../models/index.js";
-import { auth, db } from "../utils/firebaseClient.js";
-import { Constants, NotFoundException } from "../utils/index.js";
-import type { AuthService } from "./interfaces/authService.js";
+import type { AuthData, RefreshTokenDto, TokenVerifyDto, User, UserDto } from "../models/index.js";
+import type { AuthService } from "./index.js";
+import { generateToken, Constants, NotFoundException, auth, verifyToken } from "../utils/index.js";
+import type { AuthRepository, UserRepository } from "../repositories/index.js";
 
 export class AuthServiceImpl implements AuthService {
+
+  constructor(private readonly userRepository: UserRepository, private readonly authRepository: AuthRepository) {}
+
   async login(data: AuthData): Promise<UserDto> {
-    try {
-      const firebaseUser: UserRecord | null = await this.getUserByEmail(
-        data.email,
-      );
-
-      if (!firebaseUser) {
-        throw new NotFoundException("User not found");
-      }
-
-      await this.updateUserLogs(data, firebaseUser.uid);
-
-      const token = this.generateToken(data.email);
-
-      return {
-        token,
-        email: data.email,
-        displayName: firebaseUser.displayName || "",
-      };
-    } catch (error) {
+    const firebaseUser = await this.userRepository.getUserByEmail(data.email);
+    if (!firebaseUser) {
       throw new NotFoundException("User not found");
     }
+    const accessToken = this.generateAccessToken(data.email);
+    const refreshToken = this.generateRefreshToken(data.email);
+
+    await this.authRepository.saveRefreshToken(firebaseUser.id, refreshToken);
+
+    return { accessToken, refreshToken, email: data.email, displayName: data.name || "" };
   }
 
   async signup(data: AuthData): Promise<UserDto> {
     let uid: string;
 
-    let firebaseUser = await this.getUserByEmail(data.email);
+    let firebaseUser: User | null = await this.userRepository.getUserByEmail(data.email);
     console.log("Firebase User:", firebaseUser); // Debugging line
     if (!firebaseUser) {
-      firebaseUser = await auth.createUser({
-        email: data.email,
-        displayName: data.name,
-      });
+      firebaseUser = await this.userRepository.createUser(data.email, data.name || "");
     }
-    uid = firebaseUser.uid;
 
-    await this.updateUserLogs(data, uid);
+    const accessToken = this.generateAccessToken(data.email);
+    const refreshToken = this.generateRefreshToken(data.email);
 
-    const token = this.generateToken(data.email);
+    await this.authRepository.saveRefreshToken(firebaseUser.id, refreshToken);
 
-    return { token, email: data.email, displayName: data.name };
+    return { accessToken, refreshToken, email: data.email, displayName: data.name };
   }
 
-  private generateToken(email: string): string {
-    return jwt.sign({ id: email }, Constants.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-  }
-
-  private async getUserByEmail(email: string): Promise<UserRecord | null> {
+  async verifyToken(token: string): Promise<TokenVerifyDto> {
     try {
-      return (await auth.getUserByEmail(email)) || null;
+      const decoded = verifyToken(token) as { email: string };
+      const firebaseUser = await this.userRepository.getUserByEmail(decoded.email);
+
+      if (!firebaseUser) {
+        return { valid: false };
+      }
+
+      return {
+        valid: true,
+        email: decoded.email,
+        displayName: firebaseUser.displayName,
+      };
     } catch (error) {
-      return null;
+      return { valid: false };
     }
   }
 
-  private async updateUserLogs(data: AuthData, uid: string): Promise<void> {
-    const userData: any = {
-      email: data.email,
-      updatedAt: new Date(),
-    };
+  async refreshAccessToken(refreshTokenDto: RefreshTokenDto): Promise<{ accessToken: string }> {
+    try {
+      const decoded = verifyToken(refreshTokenDto.refreshToken) as { email: string };
+      const firebaseUser = await this.userRepository.getUserByEmail(decoded.email);
+      if (!firebaseUser) {
+        throw new NotFoundException("User not found");
+      }
 
-    // Agregar displayName solo si está definido
-    if (data.name) {
-      userData.displayName = data.name;
+      const refreshAccessToken = await this.authRepository.getRefreshToken(firebaseUser.id);
+      
+      if (!refreshAccessToken || refreshAccessToken !== refreshTokenDto.refreshToken) {
+        throw new NotFoundException("Invalid refresh token");
+      }
+      const accessToken = this.generateAccessToken(decoded.email);
+      
+      return { accessToken };
+    } catch (error) {
+      throw new NotFoundException("Invalid or expired refresh token");
     }
+  }
 
-    await db.collection("users").doc(uid).set(userData, { merge: true });
+  async logout(email: string): Promise<void> {
+    const firebaseUser = await this.userRepository.getUserByEmail(email);
+    if (firebaseUser) {
+      await this.authRepository.saveRefreshToken(firebaseUser.id, "");
+    }
+  }
+
+  private generateAccessToken(email: string): string {
+    return generateToken({ email, type: "access" }, Constants.ACCESS_TOKEN_EXPIRATION)
+  }
+
+  private generateRefreshToken(email: string): string {
+    return generateToken({ email, type: "refresh" }, Constants.REFRESH_TOKEN_EXPIRATION);
   }
 }
