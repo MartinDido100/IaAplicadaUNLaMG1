@@ -1,9 +1,13 @@
 import type {
   Movie,
+  PreferenceDto,
+  PreferencesHistoryDto,
   RecommendationDto,
   RecommendationOutput,
   RecommendationPromptDto,
+  UserPreferenceDto,
 } from "../models/index.js";
+import { db } from "../utils/firebaseClient.js";
 import { Constants } from "../utils/index.js";
 import type { MovieRecommendationService } from "./interfaces/index.js";
 
@@ -108,5 +112,44 @@ export class GeminiRecommenderServiceImpl
     const parsed: RecommendationOutput = JSON.parse(jsonStr);
 
     return parsed;
+  }
+
+  async saveUserPreference(email: string, preference: PreferenceDto): Promise<void> {
+    log("Saving user preference for:", email);
+    
+    const userPreference: UserPreferenceDto = {
+      email,
+      tmdbId: preference.tmdbId,
+      name: preference.name,
+      date: new Date().toISOString(),
+    };
+
+    await db.collection("preferences").add(userPreference);
+    
+    log("Preference saved successfully");
+  }
+
+  async getUserPreferences(email: string): Promise<PreferencesHistoryDto[]> {
+    log("Getting user preferences for:", email);
+    
+    const snapshot = await db
+      .collection("preferences")
+      .where("email", "==", email)
+      .orderBy("date", "desc")
+      .get();
+
+    const preferences: UserPreferenceDto[] = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        email: data.email,
+        tmdbId: data.tmdbId,
+        name: data.name,
+        date: data.date,
+      };
+    });
+
+    log("Retrieved preferences count:", preferences.length);
+    
+    return [{ preferences }];
   }
 }
