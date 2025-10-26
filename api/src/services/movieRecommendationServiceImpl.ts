@@ -21,26 +21,20 @@ export class MovieRecommendationServiceImpl implements MovieRecommendationServic
   }
 
   async recommendMovies(email: string, promptParameters: RecommendationPromptDto): Promise<RecommendationDto> {
-    // Adding time measurement for performance analysis
-    console.time("Total Processing Time");
-
-    console.time("Step 1: Generate Prompt");
     const preferencesHistory = await this.getUserPreferences(email);
     log("Method called: getUserPreferences");
     const prompt: string = this.createPrompt(promptParameters, preferencesHistory);
     log("Method called: createPrompt");
-    console.timeEnd("Step 1: Generate Prompt");
 
     let recommendationOutput: RecommendationOutput
     try {
-      recommendationOutput = await this.engineService.getRecommendation();
+      recommendationOutput = await this.engineService.getRecommendation(prompt);
     } catch (error) {
       log("Error getting recommendation from gemini engine service:", error);
-      this.engineService = this.engineManager.getRecommendationEngine("chatGPT");
-      recommendationOutput = await this.engineService.getRecommendation();
+      this.engineService = this.engineManager.getRecommendationEngine("groq");
+      recommendationOutput = await this.engineService.getRecommendation(prompt);
     }
 
-    console.time("Step 4: TMDb Service Call");
     const tmdbResponse = await this.tmdbService.findMoviesByImdbIds(
       recommendationOutput.movies,
     );
@@ -49,23 +43,16 @@ export class MovieRecommendationServiceImpl implements MovieRecommendationServic
       "Number of promises processed in TMDb Service:",
       recommendationOutput.movies.length,
     );
-    console.timeEnd("Step 4: TMDb Service Call");
 
     if (tmdbResponse.response && tmdbResponse.response.length < 5) {
-      console.time("Step 5: TMDb Fallback Call");
       this.tmdbService.findMoviesByName(recommendationOutput.movies);
       log("Method called: findMoviesByName");
-      console.timeEnd("Step 5: TMDb Fallback Call");
     }
 
-    console.time("Step 6: Filter Movies");
     const movies: Movie[] = tmdbResponse.response.filter(
       (movie): movie is Movie => movie !== null,
     );
     log("Filtering completed. Number of valid movies:", movies.length);
-    console.timeEnd("Step 6: Filter Movies");
-
-    console.timeEnd("Total Processing Time");
 
     return { movies };
   }

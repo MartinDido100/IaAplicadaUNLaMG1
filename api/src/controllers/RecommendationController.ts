@@ -99,7 +99,29 @@ recommendationRouter.get("/preferences", async (req: Request, res: Response) => 
  *               properties:
  *                 message:
  *                   type: string
- *                   description: Error message
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
+ *             example:
+ *               message: "Internal Server Error"
+ *               code: 500
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
+ *             example:
+ *               message: "Unauthorized. You must login to access this content."
+ *               code: 401
  * 
  * /api/recommendations/preferences:
  *   put:
@@ -125,6 +147,22 @@ recommendationRouter.get("/preferences", async (req: Request, res: Response) => 
  *                   type: string
  *             example:
  *               message: "Preferencias guardadas correctamente"
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
+ *             example:
+ *               message: "Unauthorized. You must login to access this content."
+ *               code: 401
  *       500:
  *         description: Internal server error
  *         content:
@@ -134,8 +172,13 @@ recommendationRouter.get("/preferences", async (req: Request, res: Response) => 
  *               properties:
  *                 message:
  *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
  *             example:
- *               message: "Error al guardar las preferencias"
+ *               message: "Internal Server Error"
+ *               code: 500
  *   get:
  *     summary: Get user movie preferences
  *     security:
@@ -160,6 +203,22 @@ recommendationRouter.get("/preferences", async (req: Request, res: Response) => 
  *                     tmdbId: "238"
  *                     name: "The Godfather"
  *                     date: "2025-10-24T15:20:00.000Z"
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
+ *             example:
+ *               message: "Unauthorized. You must login to access this content."
+ *               code: 401
  *       500:
  *         description: Internal server error
  *         content:
@@ -169,8 +228,13 @@ recommendationRouter.get("/preferences", async (req: Request, res: Response) => 
  *               properties:
  *                 message:
  *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
  *             example:
- *               message: "Error al obtener las preferencias"
+ *               message: "Internal Server Error"
+ *               code: 500
  * 
  * components:
  *   schemas:

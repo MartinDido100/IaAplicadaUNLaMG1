@@ -11,27 +11,19 @@ const port = process.env.PORT || 3000;
 // Middleware para parsear JSON
 app.use(express.json());
 
+// Configuración de CORS con whitelist
 app.use(
   cors({
-    origin: "*",
+    origin: Constants.CORS_WHITELIST,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "linear-signature"],
+    credentials: true,
   }),
 );
 
 // Rutas
 app.use("/api", router);
 app.use(ErrorHandling);
-
-app.use(
-  cors({
-    origin: Constants.CORS_WHITELIST,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "linear-signature"],
-  }),
-);
-
-app.get("/", (req, res) => {
-  res.send("¡Hola desde Express + TypeScript!");
-});
 
 // Configuración de Swagger
 const swaggerOptions = {
@@ -70,5 +62,4 @@ app.use(
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
-  console.log(`Endpoint disponible: GET /:userId/:movieId`);
 });
