@@ -5,22 +5,27 @@ import { Constants } from "../utils/constants.js";
 
 export class GroqEngineService implements EngineService {
   async getRecommendation(prompt: string): Promise<RecommendationOutput> {
-    const response = await axios.post(
-      Constants.GROQ_API_URL,
-      {
-        model: "llama3-8b-8192", 
-        messages: [{ role: "user", content: prompt }],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${Constants.GROQ_API_KEY}`,
-          "Content-Type": "application/json",
+    try {
+      const response = await axios.post(
+        Constants.GROQ_API_URL,
+        {
+          model: "llama-3.1-8b-instant", 
+          messages: [{ role: "user", content: prompt }],
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${Constants.GROQ_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    const reply = response.data.choices[0].message.content;
-    return this.parseGroqResponse(response.data);
+      const reply = response.data.choices[0].message.content;
+      return this.parseGroqResponse(reply);
+    } catch (error: any) {
+      console.error("Groq API Error:", error.response?.data || error.message);
+      throw error;
+    }
   }
 
   private parseGroqResponse(responseText: string): RecommendationOutput {
