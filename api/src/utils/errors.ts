@@ -45,6 +45,12 @@ export class NotFoundException extends HttpException {
   }
 }
 
+export class DependencyException extends HttpException {
+  constructor(dependencyName?: string) {
+    super(HttpStatus.FAILED_DEPENDENCY, `Dependency Error.`);
+  }
+}
+
 export class ConflictException extends HttpException {
   constructor(errorCode?: string) {
     super(HttpStatus.CONFLICT, "Conflict", { error_code: errorCode });

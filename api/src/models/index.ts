@@ -1,3 +1,4 @@
-export * from "./authDataDto.js";
-export * from "./Movie.js";
-export * from "./movieRecommendation.js";
+export * from "./authInterfaces.js";
+export * from "./movieInterfaces.js";
+export * from "./recommendationInterfaces.js";
+export * from "./userInterfaces.js";

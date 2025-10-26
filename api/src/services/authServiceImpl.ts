@@ -1,80 +1,159 @@
-import { UserRecord } from "firebase-admin/auth";
-import jwt from "jsonwebtoken";
-import type { AuthData, UserDto } from "../models/index.js";
-import { auth, db } from "../utils/firebaseClient.js";
-import { Constants, NotFoundException } from "../utils/index.js";
-import type { AuthService } from "./interfaces/authService.js";
+import axios from "axios";
+import type {
+  AuthData,
+  RefreshTokenDto,
+  TokenVerifyDto,
+  User,
+  UserDto,
+} from "../models/index.js";
+import type { AuthRepository, UserRepository } from "../repositories/index.js";
+import {
+  Constants,
+  NotFoundException,
+  UnauthorizedException,
+  auth,
+  generateToken,
+  verifyToken,
+} from "../utils/index.js";
+import type { AuthService } from "./index.js";
 
 export class AuthServiceImpl implements AuthService {
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly authRepository: AuthRepository,
+  ) {}
+
   async login(data: AuthData): Promise<UserDto> {
     try {
-      const firebaseUser: UserRecord | null = await this.getUserByEmail(
-        data.email,
+      const response = await axios.post(
+        Constants.FIREBASE_API_URL,
+        {
+          email: data.email,
+          password: data.password,
+          returnSecureToken: true,
+        },
+        { headers: { "Content-Type": "application/json" } },
       );
 
-      if (!firebaseUser) {
-        throw new NotFoundException("User not found");
-      }
+      const { idToken, refreshToken, localId, email } = response.data;
+      const decoded = await auth.verifyIdToken(idToken);
 
-      await this.updateUserLogs(data, firebaseUser.uid);
+      const accessToken = this.generateAccessToken(decoded.email!);
+      const customRefreshToken = this.generateRefreshToken(decoded.email!);
 
-      const token = this.generateToken(data.email);
+      await this.authRepository.saveRefreshToken(localId, customRefreshToken);
 
       return {
-        token,
-        email: data.email,
-        displayName: firebaseUser.displayName || "",
+        accessToken,
+        refreshToken,
+        email,
+        displayName: decoded.name || "",
       };
-    } catch (error) {
-      throw new NotFoundException("User not found");
+    } catch (error: any) {
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        throw new UnauthorizedException("Invalid email or password");
+      }
+      throw new NotFoundException("Failed to log in user");
     }
   }
 
   async signup(data: AuthData): Promise<UserDto> {
-    let uid: string;
-
-    let firebaseUser = await this.getUserByEmail(data.email);
+    let firebaseUser: User | null = await this.userRepository.getUserByEmail(
+      data.email,
+    );
     console.log("Firebase User:", firebaseUser); // Debugging line
     if (!firebaseUser) {
-      firebaseUser = await auth.createUser({
-        email: data.email,
-        displayName: data.name,
-      });
+      firebaseUser = await this.userRepository.createUser(
+        data.email,
+        data.name || "",
+        data.password,
+      );
     }
-    uid = firebaseUser.uid;
 
-    await this.updateUserLogs(data, uid);
+    const accessToken = this.generateAccessToken(data.email);
+    const refreshToken = this.generateRefreshToken(data.email);
 
-    const token = this.generateToken(data.email);
+    await this.authRepository.saveRefreshToken(firebaseUser.id, refreshToken);
 
-    return { token, email: data.email, displayName: data.name };
-  }
-
-  private generateToken(email: string): string {
-    return jwt.sign({ id: email }, Constants.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-  }
-
-  private async getUserByEmail(email: string): Promise<UserRecord | null> {
-    try {
-      return (await auth.getUserByEmail(email)) || null;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  private async updateUserLogs(data: AuthData, uid: string): Promise<void> {
-    const userData: any = {
+    return {
+      accessToken,
+      refreshToken,
       email: data.email,
-      updatedAt: new Date(),
+      displayName: data.name,
     };
+  }
 
-    // Agregar displayName solo si está definido
-    if (data.name) {
-      userData.displayName = data.name;
+  async verifyToken(token: string): Promise<TokenVerifyDto> {
+    try {
+      const decoded = verifyToken(token) as { email: string };
+      const firebaseUser = await this.userRepository.getUserByEmail(
+        decoded.email,
+      );
+
+      if (!firebaseUser) {
+        return { valid: false };
+      }
+
+      return {
+        valid: true,
+        email: decoded.email,
+        displayName: firebaseUser.displayName,
+      };
+    } catch (error) {
+      return { valid: false };
     }
+  }
 
-    await db.collection("users").doc(uid).set(userData, { merge: true });
+  async refreshAccessToken(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<{ accessToken: string }> {
+    try {
+      const decoded = verifyToken(refreshTokenDto.refreshToken) as {
+        email: string;
+      };
+      const firebaseUser = await this.userRepository.getUserByEmail(
+        decoded.email,
+      );
+      if (!firebaseUser) {
+        throw new NotFoundException("User not found");
+      }
+
+      const refreshAccessToken = await this.authRepository.getRefreshToken(
+        firebaseUser.id,
+      );
+
+      if (
+        !refreshAccessToken ||
+        refreshAccessToken !== refreshTokenDto.refreshToken
+      ) {
+        throw new NotFoundException("Invalid refresh token");
+      }
+      const accessToken = this.generateAccessToken(decoded.email);
+
+      return { accessToken };
+    } catch (error) {
+      throw new NotFoundException("Invalid or expired refresh token");
+    }
+  }
+
+  async logout(email: string): Promise<void> {
+    const firebaseUser = await this.userRepository.getUserByEmail(email);
+    if (firebaseUser) {
+      await this.authRepository.saveRefreshToken(firebaseUser.id, "");
+    }
+  }
+
+  private generateAccessToken(email: string): string {
+    return generateToken(
+      { email, type: "access" },
+      Constants.ACCESS_TOKEN_EXPIRATION,
+    );
+  }
+
+  private generateRefreshToken(email: string): string {
+    return generateToken(
+      { email, type: "refresh" },
+      Constants.REFRESH_TOKEN_EXPIRATION,
+    );
   }
 }

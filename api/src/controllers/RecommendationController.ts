@@ -2,12 +2,12 @@ import debug from "debug";
 import type { Request, Response } from "express";
 import { Router } from "express";
 import HttpStatus from "http-status";
-import type { RecommendationPromptDto } from "../models/movieRecommendation.js";
+import type { RecommendationPromptDto } from "../models/index.js";
+import type { MovieRecommendationService } from "../services/index.js";
 import {
   GeminiRecommenderServiceImpl,
   TmdbService,
 } from "../services/index.js";
-import type { MovieRecommendationService } from "../services/interfaces/index.js";
 
 export const recommendationRouter: Router = Router();
 
