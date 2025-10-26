@@ -23,6 +23,8 @@ export const validateTokenPresence = (req: Request, res: Response, next: Functio
   if (!token || bearer !== "Bearer") {
     return next(new UnauthorizedException("No token provided"));
   }
+  
+  next();
 };
 
 export const generateToken = (
@@ -40,7 +42,7 @@ export const verifyToken = (
       string,
       string | boolean | number
     >;
-  } catch (error) {
+  } catch (error: any) {
     throw new UnauthorizedException("Invalid token");
   }
 };

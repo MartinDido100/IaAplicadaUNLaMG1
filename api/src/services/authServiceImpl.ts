@@ -45,7 +45,7 @@ export class AuthServiceImpl implements AuthService {
 
       return {
         accessToken,
-        refreshToken,
+        refreshToken: customRefreshToken,
         email,
         displayName: decoded.name || "",
       };
@@ -58,29 +58,46 @@ export class AuthServiceImpl implements AuthService {
   }
 
   async signup(data: AuthData): Promise<UserDto> {
-    let firebaseUser: User | null = await this.userRepository.getUserByEmail(
-      data.email,
-    );
-    console.log("Firebase User:", firebaseUser); // Debugging line
-    if (!firebaseUser) {
-      firebaseUser = await this.userRepository.createUser(
-        data.email,
-        data.name || "",
-        data.password,
+    try {
+      // Usar la API REST de Firebase para crear el usuario y permitir login
+      const response = await axios.post(
+        Constants.FIREBASE_SIGNUP_URL,
+        {
+          email: data.email,
+          password: data.password,
+          returnSecureToken: true,
+        },
+        { headers: { "Content-Type": "application/json" } },
       );
+
+      const { idToken, refreshToken: firebaseRefreshToken, localId, email } = response.data;
+      
+      // Actualizar el displayName del usuario en Firebase Auth
+      if (data.name) {
+        await auth.updateUser(localId, { displayName: data.name });
+      }
+
+      const accessToken = this.generateAccessToken(email);
+      const customRefreshToken = this.generateRefreshToken(email);
+
+      await this.authRepository.saveRefreshToken(localId, customRefreshToken);
+
+      return {
+        accessToken,
+        refreshToken: customRefreshToken,
+        email,
+        displayName: data.name || "",
+      };
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.error?.message || "Failed to sign up";
+        if (errorMessage.includes("EMAIL_EXISTS")) {
+          throw new UnauthorizedException("Email already exists");
+        }
+        throw new UnauthorizedException(errorMessage);
+      }
+      throw new NotFoundException("Failed to sign up user");
     }
-
-    const accessToken = this.generateAccessToken(data.email);
-    const refreshToken = this.generateRefreshToken(data.email);
-
-    await this.authRepository.saveRefreshToken(firebaseUser.id, refreshToken);
-
-    return {
-      accessToken,
-      refreshToken,
-      email: data.email,
-      displayName: data.name,
-    };
   }
 
   async verifyToken(token: string): Promise<TokenVerifyDto> {

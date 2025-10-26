@@ -8,12 +8,12 @@ import { log } from "debug";
 export class FirebaseUserRepositoryImpl implements UserRepository {
   public async getUserByEmail(email: string): Promise<User | null> {
     try {
-      const userRecord: UserRecord | null = await auth.getUserByEmail(email);
+      const userRecord: UserRecord = await auth.getUserByEmail(email);
 
       return userRecord
         ? { id: userRecord.uid, email: userRecord.email!!, displayName: userRecord.displayName!! }
         : null;
-    } catch (error) {
+    } catch (error: any) {
       throw new DependencyException("User not found");
     }
   }
@@ -23,6 +23,7 @@ export class FirebaseUserRepositoryImpl implements UserRepository {
       const userRecord: UserRecord = await auth.createUser({ email, displayName, password });
       return { id: userRecord.uid, email: userRecord.email!!, displayName };
     } catch (error) {
+      log("Error creating user:", error);
       throw new DependencyException("Failed to create user");
     }
   }
@@ -51,22 +52,25 @@ export class FirebaseUserRepositoryImpl implements UserRepository {
     try {
       log("Getting user preferences for:", email);
       
+      // Query sin orderBy para evitar necesidad de índice
+      // El índice puede tardar varios minutos en estar disponible después de crearlo
       const snapshot = await db
         .collection("preferences")
         .where("email", "==", email)
-        .orderBy("date", "desc")
-        .limit(5)
         .get();
   
-      const preferences: UserPreferenceDto[] = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          email: data.email,
-          tmdbId: data.tmdbId,
-          name: data.name,
-          date: data.date,
-        };
-      });
+      const preferences: UserPreferenceDto[] = snapshot.docs
+        .map((doc) => {
+          const data = doc.data();
+          return {
+            email: data.email,
+            tmdbId: data.tmdbId,
+            name: data.name,
+            date: data.date,
+          };
+        })
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 5);
   
       log("Retrieved preferences count:", preferences.length);
       

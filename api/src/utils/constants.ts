@@ -10,6 +10,7 @@ export class Constants {
   static REFRESH_TOKEN_EXPIRATION: StringValue = "7d";
   static FIREBASE_API_KEY: string = process.env.FIREBASE_API_KEY!;
   static FIREBASE_API_URL: string = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${this.FIREBASE_API_KEY}`;
+  static FIREBASE_SIGNUP_URL: string = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${this.FIREBASE_API_KEY}`;
   static GEMINI_API_KEY: string = process.env.GEMINI_API_KEY!;
   static GEMINI_API_URL: string = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.GEMINI_API_KEY}`;
   static TMDB_TOKEN: string = process.env.TMDB_TOKEN!;

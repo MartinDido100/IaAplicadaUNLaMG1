@@ -5,6 +5,7 @@ import {
 } from "../repositories/index.js";
 import { AuthServiceImpl } from "../services/index.js";
 import { validateTokenPresence, verifyToken } from "../utils/auth.js";
+import { UnauthorizedException } from "../utils/index.js";
 
 const userRepository = new FirebaseUserRepositoryImpl();
 const authRepository = new FirebaseAuthRepositoryImpl();
@@ -48,8 +49,12 @@ authRouter.post("/verify", validateTokenPresence, async (req, res) => {
   res.status(200).json(result);
 });
 
-authRouter.post("/refresh", validateTokenPresence, async (req, res) => {
+authRouter.post("/refresh", async (req, res) => {
   const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    throw new UnauthorizedException("Refresh token is required");
+  }
 
   const result = await authService.refreshAccessToken({ refreshToken });
 
@@ -86,11 +91,20 @@ authRouter.post("/logout", validateTokenPresence, async (req, res) => {
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - password
  *             properties:
  *               name:
  *                 type: string
- *           example:
- *             name: "John Doe"
+ *                 description: Display name for the user
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: User password
+ *             example:
+ *               name: "John Doe"
+ *               password: "securePassword123"
  *     responses:
  *       201:
  *         description: User created successfully
@@ -115,9 +129,53 @@ authRouter.post("/logout", validateTokenPresence, async (req, res) => {
  *               email: "john.doe@example.com"
  *               displayName: "John Doe"
  *       400:
- *         description: Bad request
+ *         description: Bad request - Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
+ *             example:
+ *               message: "Validation Error"
+ *               code: 400
+ *       409:
+ *         description: Conflict - User already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
+ *             example:
+ *               message: "Conflict"
+ *               code: 409
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
+ *             example:
+ *               message: "Internal Server Error"
+ *               code: 500
  *
  * /api/auth/login/{email}:
  *   post:
@@ -130,6 +188,26 @@ authRouter.post("/logout", validateTokenPresence, async (req, res) => {
  *         schema:
  *           type: string
  *         description: The email of the user to log in
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Display name for the user
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: User password
+ *             example:
+ *               name: "John Doe"
+ *               password: "securePassword123"
  *     responses:
  *       200:
  *         description: User authenticated successfully
@@ -154,9 +232,37 @@ authRouter.post("/logout", validateTokenPresence, async (req, res) => {
  *               email: "john.doe@example.com"
  *               displayName: "John Doe"
  *       401:
- *         description: Unauthorized
+ *         description: Unauthorized - Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
+ *             example:
+ *               message: "Unauthorized. You must login to access this content."
+ *               code: 401
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 code:
+ *                   type: number
+ *                 errors:
+ *                   type: object
+ *             example:
+ *               message: "Internal Server Error"
+ *               code: 500
  *
  * /api/auth/verify:
  *   post:
