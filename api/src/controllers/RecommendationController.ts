@@ -4,27 +4,27 @@ import { Router } from "express";
 import HttpStatus from "http-status";
 import type { PreferenceDto, RecommendationPromptDto } from "../models/index.js";
 import type { MovieRecommendationService } from "../services/index.js";
-import {
-  GeminiRecommenderServiceImpl,
-  TmdbService,
-} from "../services/index.js";
+import { EngineManagerImpl, MovieRecommendationServiceImpl, TmdbService } from "../services/index.js";
+import { FirebaseUserRepositoryImpl } from "../repositories/index.js";
 
 export const recommendationRouter: Router = Router();
 
 const tmdbService = new TmdbService();
-const movieRecommendationService: MovieRecommendationService = new GeminiRecommenderServiceImpl(tmdbService);
+const engineManager = new EngineManagerImpl();
+const userRepository = new FirebaseUserRepositoryImpl();
+const movieRecommendationService: MovieRecommendationService = new MovieRecommendationServiceImpl(tmdbService, engineManager, userRepository);
 const log = debug("app:recommendationController");
 
 recommendationRouter.post("/", async (req: Request<any, any, RecommendationPromptDto>, res: Response) => {
-    const payload: RecommendationPromptDto = req.body;
+  const payload: RecommendationPromptDto = req.body;
+  const { email } = res.locals.context;
 
-    log("Request received for movie recommendation");
+  log("Request received for movie recommendation");
 
-    const response = await movieRecommendationService.recommendMovies(payload);
+  const response = await movieRecommendationService.recommendMovies(email, payload);
 
-    res.status(HttpStatus.OK).json(response);
-  },
-);
+  res.status(HttpStatus.OK).json(response);
+});
 
 recommendationRouter.put("/preferences", async (req: Request<any, any, PreferenceDto>, res: Response) => {
   const payload: PreferenceDto = req.body;
