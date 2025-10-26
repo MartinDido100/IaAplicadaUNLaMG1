@@ -2,32 +2,44 @@ import debug from "debug";
 import type { Request, Response } from "express";
 import { Router } from "express";
 import HttpStatus from "http-status";
-import type { RecommendationPromptDto } from "../models/index.js";
+import type { PreferenceDto, RecommendationPromptDto } from "../models/index.js";
 import type { MovieRecommendationService } from "../services/index.js";
-import {
-  GeminiRecommenderServiceImpl,
-  TmdbService,
-} from "../services/index.js";
+import { EngineManagerImpl, MovieRecommendationServiceImpl, TmdbService } from "../services/index.js";
+import { FirebaseUserRepositoryImpl } from "../repositories/index.js";
 
 export const recommendationRouter: Router = Router();
 
 const tmdbService = new TmdbService();
-const movieRecommendationService: MovieRecommendationService =
-  new GeminiRecommenderServiceImpl(tmdbService);
+const engineManager = new EngineManagerImpl();
+const userRepository = new FirebaseUserRepositoryImpl();
+const movieRecommendationService: MovieRecommendationService = new MovieRecommendationServiceImpl(tmdbService, engineManager, userRepository);
 const log = debug("app:recommendationController");
 
-recommendationRouter.post(
-  "/",
-  async (req: Request<any, any, RecommendationPromptDto>, res: Response) => {
-    const payload: RecommendationPromptDto = req.body;
+recommendationRouter.post("/", async (req: Request<any, any, RecommendationPromptDto>, res: Response) => {
+  const payload: RecommendationPromptDto = req.body;
+  const { email } = res.locals.context;
 
-    log("Request received for movie recommendation");
+  log("Request received for movie recommendation");
 
-    const response = await movieRecommendationService.recommendMovies(payload);
+  const response = await movieRecommendationService.recommendMovies(email, payload);
 
-    res.status(HttpStatus.OK).json(response);
-  },
-);
+  res.status(HttpStatus.OK).json(response);
+});
+
+recommendationRouter.put("/preferences", async (req: Request<any, any, PreferenceDto>, res: Response) => {
+  const payload: PreferenceDto = req.body;
+  const { email } = res.locals.context;
+
+  await movieRecommendationService.saveUserPreference(email, payload);
+  res.status(HttpStatus.OK).json({ message: "Preferencias guardadas correctamente" });
+});
+
+recommendationRouter.get("/preferences", async (req: Request, res: Response) => {
+  const { email } = res.locals.context;
+
+  const preferences = await movieRecommendationService.getUserPreferences(email);
+  res.status(HttpStatus.OK).json(preferences);
+});
 
 /**
  * @swagger
@@ -88,6 +100,78 @@ recommendationRouter.post(
  *                 message:
  *                   type: string
  *                   description: Error message
+ * 
+ * /api/recommendations/preferences:
+ *   put:
+ *     summary: Save user movie preference
+ *     security:
+ *       - bearerAuth: []
+ *     description: Saves a movie that the user liked to their preference history.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/PreferenceDto'
+ *     responses:
+ *       200:
+ *         description: Preference saved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "Preferencias guardadas correctamente"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "Error al guardar las preferencias"
+ *   get:
+ *     summary: Get user movie preferences
+ *     security:
+ *       - bearerAuth: []
+ *     description: Retrieves the history of movies that the user has liked.
+ *     responses:
+ *       200:
+ *         description: User preferences retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PreferencesHistoryDto'
+ *             example:
+ *               - preferences:
+ *                   - email: "user@example.com"
+ *                     tmdbId: "122"
+ *                     name: "The Lord of the Rings: The Return of the King"
+ *                     date: "2025-10-25T10:30:00.000Z"
+ *                   - email: "user@example.com"
+ *                     tmdbId: "238"
+ *                     name: "The Godfather"
+ *                     date: "2025-10-24T15:20:00.000Z"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example:
+ *               message: "Error al obtener las preferencias"
+ * 
  * components:
  *   schemas:
  *     RecommendationPromptDto:
@@ -192,4 +276,53 @@ recommendationRouter.post(
  *           type: number
  *         vote_count:
  *           type: number
+ *     PreferenceDto:
+ *       type: object
+ *       required:
+ *         - tmdbId
+ *         - name
+ *       properties:
+ *         tmdbId:
+ *           type: string
+ *           description: The TMDb ID of the movie
+ *         name:
+ *           type: string
+ *           description: The name of the movie
+ *       example:
+ *         tmdbId: "122"
+ *         name: "The Lord of the Rings: The Return of the King"
+ *     UserPreferenceDto:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           description: User's email
+ *         tmdbId:
+ *           type: string
+ *           description: The TMDb ID of the movie
+ *         name:
+ *           type: string
+ *           description: The name of the movie
+ *         date:
+ *           type: string
+ *           format: date-time
+ *           description: When the preference was saved
+ *       example:
+ *         email: "user@example.com"
+ *         tmdbId: "122"
+ *         name: "The Lord of the Rings: The Return of the King"
+ *         date: "2025-10-25T10:30:00.000Z"
+ *     PreferencesHistoryDto:
+ *       type: object
+ *       properties:
+ *         preferences:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/UserPreferenceDto'
+ *       example:
+ *         preferences:
+ *           - email: "user@example.com"
+ *             tmdbId: "122"
+ *             name: "The Lord of the Rings: The Return of the King"
+ *             date: "2025-10-25T10:30:00.000Z"
  */

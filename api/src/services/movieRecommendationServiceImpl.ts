@@ -1,55 +1,44 @@
 import type {
   Movie,
+  PreferenceDto,
+  PreferencesHistoryDto,
   RecommendationDto,
   RecommendationOutput,
   RecommendationPromptDto,
 } from "../models/index.js";
-import { Constants } from "../utils/index.js";
-import type { MovieRecommendationService } from "./interfaces/index.js";
-
-import type { AxiosResponse } from "axios";
-import axios from "axios";
+import type { EngineManager, EngineService, MovieRecommendationService } from "./interfaces/index.js";
 import debug from "debug";
 import type { TmdbService } from "./tmdbService.js";
+import type { UserRepository } from "../repositories/index.js";
 
-const log = debug("app:geminiRecommenderServiceImpl");
+const log = debug("app:movieRecommendationServiceImpl");
 
-export class GeminiRecommenderServiceImpl
-  implements MovieRecommendationService
-{
-  constructor(private readonly tmdbService: TmdbService) {}
+export class MovieRecommendationServiceImpl implements MovieRecommendationService {
+  private engineService: EngineService;
 
-  async recommendMovies(
-    promptParameters: RecommendationPromptDto,
-  ): Promise<RecommendationDto> {
+  constructor(private readonly tmdbService: TmdbService, private readonly engineManager: EngineManager, private readonly userRepository: UserRepository) {
+    this.engineService = engineManager.getRecommendationEngine("gemini");
+  }
+
+  async recommendMovies(email: string, promptParameters: RecommendationPromptDto): Promise<RecommendationDto> {
     // Adding time measurement for performance analysis
     console.time("Total Processing Time");
 
     console.time("Step 1: Generate Prompt");
-    const prompt: string = this.createPrompt(promptParameters);
+    const preferencesHistory = await this.getUserPreferences(email);
+    log("Method called: getUserPreferences");
+    const prompt: string = this.createPrompt(promptParameters, preferencesHistory);
     log("Method called: createPrompt");
-    log("Generated Prompt:", prompt);
     console.timeEnd("Step 1: Generate Prompt");
 
-    console.time("Step 2: Gemini API Request");
-    const response: AxiosResponse = await axios.post(
-      Constants.GEMINI_API_URL,
-      { contents: [{ parts: [{ text: prompt }] }] },
-      { headers: { "Content-Type": "application/json" } },
-    );
-    log("Method called: axios.post to Gemini API");
-    console.timeEnd("Step 2: Gemini API Request");
-
-    if (response.status !== 200) {
-      throw new Error(`Gemini API error: ${response.statusText}`);
+    let recommendationOutput: RecommendationOutput
+    try {
+      recommendationOutput = await this.engineService.getRecommendation();
+    } catch (error) {
+      log("Error getting recommendation from gemini engine service:", error);
+      this.engineService = this.engineManager.getRecommendationEngine("chatGPT");
+      recommendationOutput = await this.engineService.getRecommendation();
     }
-
-    console.time("Step 3: Parse Gemini Response");
-    const recommendationOutput: RecommendationOutput = this.parseGeminiResponse(
-      response.data?.candidates?.[0]?.content?.parts?.[0]?.text ?? null,
-    );
-    log("Method called: parseGeminiResponse");
-    console.timeEnd("Step 3: Parse Gemini Response");
 
     console.time("Step 4: TMDb Service Call");
     const tmdbResponse = await this.tmdbService.findMoviesByImdbIds(
@@ -81,7 +70,7 @@ export class GeminiRecommenderServiceImpl
     return { movies };
   }
 
-  private createPrompt(promptParameters: RecommendationPromptDto): string {
+  private createPrompt(promptParameters: RecommendationPromptDto, preferencesHistory: PreferencesHistoryDto[]): string {
     return [
       "Eres un recomendador de cine conciso.",
       `Prompt del usuario: "${promptParameters.textPrompt}".`,
@@ -89,24 +78,20 @@ export class GeminiRecommenderServiceImpl
       `Géneros solicitados: ${promptParameters.genres?.length ? promptParameters.genres.join(", ") : ""}`,
       `Audiencias objetivo: ${promptParameters.audiences?.length ? promptParameters.audiences.join(", ") : ""}`,
       `Duraciones aproximadas: ${promptParameters.durations?.length ? promptParameters.durations.join(", ") : ""}`,
+      `Preferencias del usuario: ${preferencesHistory.flatMap((history: PreferencesHistoryDto) => history.preferences).map((pref) => pref.name).join(", ")}`,
       "En base a estos parámetros de entrada, selecciona 5 películas que estén tanto entre las mejor rankeadas en IMDb (Top Rated) como entre las que están en tendencia actualmente (Trending).",
+      "Si los parámetros de entrada del usuario incluyen un tipo de película que coincida con alguna de las películas registradas en su historial, selecciona al menos una recomendación que pertenezca a la misma saga o franquicia que una de esas películas.",
       "Devuelve SOLO un JSON válido con este formato:",
       `{"movies":[{"title":"<título>","date":"<aaaa-mm-dd>","imdbId":"<id de IMDb>","reason":"<por qué es adecuada>"}]}`,
       "No agregues texto fuera del JSON.",
-    ]
-      .filter(Boolean)
-      .join("\n");
+    ].filter(Boolean).join("\n");
   }
 
-  private parseGeminiResponse(responseText: string): RecommendationOutput {
-    if (!responseText) {
-      throw new Error("Respuesta vacía de Gemini.");
-    }
-    const jsonMatch: RegExpMatchArray | null =
-      responseText.match(/\{[\s\S]*\}/);
-    const jsonStr: string = jsonMatch ? jsonMatch[0] : responseText;
-    const parsed: RecommendationOutput = JSON.parse(jsonStr);
+  async saveUserPreference(email: string, preference: PreferenceDto): Promise<void> {
+    await this.userRepository.saveUserPreference(email, preference);
+  }
 
-    return parsed;
+  async getUserPreferences(email: string): Promise<PreferencesHistoryDto[]> {
+    return await this.userRepository.getUserPreferences(email);
   }
 }

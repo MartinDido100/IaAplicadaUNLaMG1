@@ -40,3 +40,19 @@ export interface RecommendedMovie {
   imdbId: string;
   reason: string;
 }
+
+export interface PreferenceDto {
+  tmdbId: string;
+  name: string;
+}
+
+export interface UserPreferenceDto {
+  email: string;
+  tmdbId: string;
+  name: string;
+  date: string;
+}
+
+export interface PreferencesHistoryDto {
+  preferences: UserPreferenceDto[];
+}
