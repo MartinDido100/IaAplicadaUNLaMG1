@@ -13,7 +13,7 @@
 }
 
 .movies-cards{
-    @include flex-container(row, flex-start, center, 4em);
+    @include flex-container(row, center, center, 4em);
     width: 100%;
     flex-wrap: wrap;
 }
@@ -37,7 +37,6 @@ h3{
 }
 
 app-movie-card{
-  // flex: 1 1 250px;
   max-width: 300px;
 }
 

@@ -49,3 +49,16 @@ img, picture, video, canvas, svg {
 .cdk-overlay-container{
   z-index: 999999;
 }
+
+.error-msg{
+    color: rgb(231, 21, 21);
+    font-size: 0.9rem;
+    align-self: flex-start;
+    font-weight: bold;
+}
+
+.formGroup-error{
+    color: rgb(231, 21, 21);
+    font-size: 0.9rem;
+    font-weight: 600;
+}

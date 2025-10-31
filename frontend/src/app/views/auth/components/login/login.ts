@@ -14,31 +14,32 @@ import { Spinner } from '../../../../shared/spinner/spinner';
 })
 export class Login {
   private fb = inject(FormBuilder);
-  private aS = inject(Auth);
+  aS = inject(Auth);
   private router = inject(Router);
   form: FormGroup;
   loading = signal(false);
   loginError = signal('');
+  submitted = signal(false);
 
   constructor() {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
 
   login() {
+    this.submitted.set(true);
     if (this.form.valid) {
       this.loading.set(true);
-      this.aS.login(this.form.value.email).subscribe({
+      this.aS.login(this.form.value.email, this.form.value.password).subscribe({
         next: () => {
           this.loading.set(false);
           this.router.navigate(['/']);
         },
         error: (e) => {
           this.loading.set(false);
-          if (e.error.code === 404) {
-            this.loginError.set('No se encontró un usuario con ese correo electrónico.');
-          }
+          this.loginError.set(e?.error?.errors?.error_code || 'Correo electrónico o contraseña incorrectos');
         }
       });
     }

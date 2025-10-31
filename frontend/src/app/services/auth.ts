@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, WritableSignal, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { AuthResponse, User } from '../interfaces/Auth';
-import { catchError, tap } from 'rxjs';
+import { AuthResponse, User, VerifyTokenResponse } from '../interfaces/Auth';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -16,19 +17,27 @@ export class Auth {
     return this.loggedUser();
   }
 
-  register(email: string, name: string) {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/signup/${email}`, { name }).pipe(
+  getFormError(field: string, error: string, form: FormGroup, submitted: boolean = false): boolean {
+    const control = form.get(field);
+    const hasError = control?.hasError(error) ?? false;
+    return hasError && submitted;
+  }
+
+  register(email: string, name: string, password: string) {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/signup/${email}`, { name, password }).pipe(
       tap(response => {
-        localStorage.setItem('loggedUser', JSON.stringify(response));
+          localStorage.setItem('refreshToken', response.refreshToken);
+          localStorage.setItem('accessToken', response.accessToken);
         this.loggedUser.set({ email: response.email, displayName: response.displayName });
       })
     );
   }
 
-  login(email: string) {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login/${email}`, {}).pipe(
+  login(email: string, password: string) {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login/${email}`, { password }).pipe(
       tap(response => {
-        localStorage.setItem('loggedUser', JSON.stringify(response));
+        localStorage.setItem('refreshToken', response.refreshToken);
+        localStorage.setItem('accessToken', response.accessToken);
         this.loggedUser.set({ email: response.email, displayName: response.displayName });
       }),
       catchError(err => {
@@ -38,22 +47,31 @@ export class Auth {
     );
   }
 
-  renewToken(email: string, loggedUser: AuthResponse) {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login/${email}`, {}).pipe(
+  verifyToken() {
+    return this.http.post<VerifyTokenResponse>(`${this.apiUrl}/auth/verify`,{}).pipe(
       tap(response => {
-        loggedUser.token = response.token;
-        console.log(loggedUser);
-        localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
-      })
-    )
+        if (response.valid) {
+          this.loggedUser.set({ email: response.email, displayName: response.displayName });
+        }
+      }),
+      switchMap(response => {
+        if (!response.valid) {
+          return this.refreshToken(localStorage.getItem('refreshToken') || '').pipe(
+            map(() => response.valid),
+            catchError(() => of(false))
+          );
+        }
+        return of(true);
+      }),
+    );
   }
 
-  persistLogin() {
-    const currentLoggedUser = JSON.parse(localStorage.getItem('loggedUser') || 'null') as AuthResponse | null;
-    if (currentLoggedUser) {
-      this.loggedUser.set(currentLoggedUser);
-      this.renewToken(currentLoggedUser.email, currentLoggedUser).subscribe();
-    }
+  refreshToken(refreshToken: string) {
+    return this.http.post<{accessToken: string}>(`${this.apiUrl}/auth/refresh`, { refreshToken }).pipe(
+      tap(response => {
+        localStorage.setItem('accessToken', response.accessToken);
+      })
+    );
   }
 
   logout(){

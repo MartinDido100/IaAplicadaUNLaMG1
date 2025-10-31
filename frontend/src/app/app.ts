@@ -18,7 +18,12 @@ export class App implements OnInit {
 
 
   ngOnInit() {
-    this.authService.persistLogin();
+    const token = localStorage.getItem('accessToken');
+
+    if(token){
+      this.authService.verifyToken().subscribe();
+    }
+
     this.movieService.getGenres().subscribe();
   }
 

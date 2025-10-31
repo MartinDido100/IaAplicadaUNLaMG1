@@ -11,6 +11,7 @@ import { Auth } from '../../services/auth';
 })
 export class Header {
   auth = inject(Auth);
+  readonly token = localStorage.getItem('accessToken');
 
   logout() {
     this.auth.logout();
