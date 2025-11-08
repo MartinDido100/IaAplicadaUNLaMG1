@@ -22,15 +22,16 @@
 .nav{
     @include flex-container(row, stretch, center, 1rem);
     padding: 1.6rem 3rem;
-    border-bottom: #e5e5e5 1px solid;
+    border-bottom: var(--border-color) 1px solid;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     width: 100%;
-    background-color: white;
+    background-color: var(--bg-primary);
     z-index: 9999;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 a{
@@ -76,6 +77,37 @@ a{
 .welcome{
     margin-right: 1rem;
     font-size: 1.3rem;
-    color: var(--primary-color);
+    color: var(--text-accent);
     font-weight: 700;
+}
+
+.theme-toggle {
+    @include flex-container(row, center, center, 0);
+    padding: 0.6rem;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 0.5rem;
+
+    &:hover {
+        background: var(--bg-secondary);
+        transform: scale(1.05);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    svg {
+        width: 1.2rem;
+        height: 1.2rem;
+        transition: transform 0.2s ease;
+    }
+
+    &:hover svg {
+        transform: rotate(15deg);
+    }
 }

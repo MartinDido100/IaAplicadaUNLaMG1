@@ -69,13 +69,21 @@ export class Auth {
   refreshToken(refreshToken: string) {
     return this.http.post<{accessToken: string}>(`${this.apiUrl}/auth/refresh`, { refreshToken }).pipe(
       tap(response => {
+        console.log('Token refreshed', response);
         localStorage.setItem('accessToken', response.accessToken);
+      }),
+      catchError((err) => {
+        console.error('Error refreshing token', err);
+        console.log(this.loggedUser());
+        this.logout();
+        return of(null);
       })
     );
   }
 
   logout(){
-    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     this.loggedUser.set(null);
   }
 }

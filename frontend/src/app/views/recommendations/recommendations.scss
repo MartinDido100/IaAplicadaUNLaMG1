@@ -22,7 +22,7 @@
 
     span {
         font-size: 1.3rem;
-        color: #737373;
+        color: var(--text-secondary);
     }
 }
 
@@ -31,12 +31,13 @@
     background: var(--secondary-color);
     padding: 2.5rem 3rem;
     border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px var(--shadow-color);
     width: 90%;
     max-width: 56rem;
 
     h3{
         font-size: 1.8rem;
+        color: var(--text-primary);
     }
 }
 
@@ -54,10 +55,12 @@
         min-height: 10rem;
         padding: 1rem;
         font-size: 1.2rem;
-        border: 2px solid #e5e7eb;
+        border: 2px solid var(--border-input);
         border-radius: .5rem;
         resize: none;
         field-sizing: content;
+        background-color: var(--bg-input);
+        color: var(--text-primary);
 
         &:focus {
             border-color: var(--primary-color);
@@ -75,9 +78,10 @@
 .radio-group{
     @include flex-container(row, center, flex-start, 1.3rem);
     flex-wrap: wrap;
-    border: 2px solid #e5e7eb;
+    border: 2px solid var(--border-color);
     padding: 1rem;
     border-radius: 2rem;
+    background-color: var(--bg-tertiary);
 
     input[type="checkbox"]{
         display: none;
@@ -85,11 +89,13 @@
 
     & label{
         padding: .5rem 1rem;
-        border: 2px solid #e5e7eb;
+        border: 2px solid var(--border-color);
         border-radius: 2rem;
         cursor: pointer;
         transition: all 0.3s ease;
         font-size: 1rem;
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
 
         &:hover {
             background-color: var(--primary-color);
@@ -121,4 +127,60 @@ button{
 
 .prompt-label{
     text-align: center;
+}
+
+.advanced-search-toggle {
+    width: 100%;
+    @include flex-container(row, center, center, 0);
+    
+    .toggle-btn {
+        background: transparent;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        border-radius: 2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        @include flex-container(row, center, center, 0.5rem);
+        
+        &:hover {
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            opacity: 1;
+        }
+        
+        .toggle-icon {
+            transition: transform 0.5s ease;
+            
+            &.rotated {
+                transform: rotate(180deg);
+            }
+        }
+    }
+}
+
+.advanced-filters {
+    width: 100%;
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.6s ease, opacity 0.4s ease, padding 0.4s ease;
+    overflow: hidden;
+    opacity: 1;
+    
+    .filters-content {
+        min-height: 0;
+        @include flex-container(column, center, center, 2rem);
+        padding: 2rem 0 0 0;
+    }
+    
+    &.hidden {
+        grid-template-rows: 0fr;
+        opacity: 0;
+        padding: 0;
+        
+        .filters-content {
+            padding: 0;
+        }
+    }
 }

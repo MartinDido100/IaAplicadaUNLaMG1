@@ -9,8 +9,9 @@ h3{
     @include flex-container(column, center, center, 1.7rem);
     padding: 24px;
     border-radius: 1rem;
-    background: #f5f5f5;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--bg-form);
+    box-shadow: 0 4px 6px var(--shadow-color);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .login-form{
@@ -25,8 +26,10 @@ h3{
     & input{
         width: 100%;
         padding: .6rem 1rem;
-        border: 2px solid #e5e7eb;
+        border: 2px solid var(--border-input);
         border-radius: .5rem;
+        background-color: var(--bg-input);
+        color: var(--text-primary);
         transition: border-color 0.3s, box-shadow 0.3s;
     }
 

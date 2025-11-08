@@ -13,6 +13,9 @@ html, body {
   height: 100%;
   min-height: 100vh;
   font-family: sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 ul, ol {
   list-style: none;
@@ -36,6 +39,48 @@ img, picture, video, canvas, svg {
   --primary-color: #8b5cf6;
   --secondary-color: #ffffff;
   --third-color: #000000;
+  
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #e2e8f0;
+  --bg-form: #f5f5f5;
+  --bg-input: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-accent: #8b5cf6;
+  --border-color: #e2e8f0;
+  --border-input: #e5e7eb;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --scrollbar-track: rgba(0, 0, 0, 0.05);
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);
+  --danger-color: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-shadow: rgba(220, 38, 38, 0.3);
+}
+
+:root[data-theme="dark"], .dark {
+  --primary-color: #a855f7;
+  --secondary-color: #1e293b;
+  --third-color: #ffffff;
+  
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-form: #334155;
+  --bg-input: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-accent: #a855f7;
+  --border-color: #475569;
+  --border-input: #475569;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --scrollbar-track: rgba(255, 255, 255, 0.05);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+  --danger-color: #f87171;
+  --danger-hover: #ef4444;
+  --danger-shadow: rgba(248, 113, 113, 0.4);
 }
 
 .spacer{

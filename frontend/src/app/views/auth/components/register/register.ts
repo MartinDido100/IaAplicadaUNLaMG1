@@ -3,11 +3,11 @@ import { Logo } from '../../../../shared/logo/logo';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../../../services/auth';
 import { Spinner } from '../../../../shared/spinner/spinner';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [Logo,ReactiveFormsModule,Spinner],
+  imports: [Logo,ReactiveFormsModule,Spinner, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

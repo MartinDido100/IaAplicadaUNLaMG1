@@ -37,4 +37,8 @@
     @if(errorMessage()){
         <span class="error-msg">{{ errorMessage() }}</span>
     }
+    <p style="margin-top: 1rem; text-align: center; color: var(--text-secondary);">
+        ¿Ya tienes cuenta? 
+        <a routerLink="/auth/login" style="color: var(--primary-color); text-decoration: underline;">Inicia sesión aquí</a>
+    </p>
 </div>

@@ -4,6 +4,7 @@ import { Header } from "./shared/header/header";
 import { Footer } from "./shared/footer/footer";
 import { MovieService } from './services/movie-service';
 import { Auth } from './services/auth';
+import { ThemeService } from './services/theme';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ import { Auth } from './services/auth';
 })  
 export class App implements OnInit {
   private movieService = inject(MovieService);
+  private themeService = inject(ThemeService);
   readonly authService = inject(Auth);
 
 

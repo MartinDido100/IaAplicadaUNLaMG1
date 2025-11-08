@@ -30,4 +30,8 @@
     @if(loginError()){
         <p class="error-msg">{{ loginError() }}</p>
     }
+    <p style="margin-top: 1rem; text-align: center; color: var(--text-secondary);">
+        ¿No tienes cuenta? 
+        <a routerLink="/auth/register" style="color: var(--primary-color); text-decoration: underline;">Regístrate aquí</a>
+    </p>
 </div>

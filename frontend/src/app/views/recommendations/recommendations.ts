@@ -21,6 +21,7 @@ export class Recommendations {
   private readonly rS = inject(RecommendationService);
   private readonly dialog = inject(Dialog);
   loading = signal(false);
+  showAdvancedSearch = signal(false);
 
   moods = Object.values(Mood);
   audiences = Object.values(Audience);
@@ -66,5 +67,9 @@ export class Recommendations {
       }
       });
     }
+  }
+
+  toggleAdvancedSearch() {
+    this.showAdvancedSearch.set(!this.showAdvancedSearch());
   }
 }

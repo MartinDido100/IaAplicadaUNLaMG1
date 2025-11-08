@@ -13,51 +13,64 @@
                 <textarea formControlName="textPrompt" placeholder="Escribe aquí tu estado de ánimo..." id="textPrompt" name="textPrompt"></textarea>
             </div>
 
-            <div class="form-field">
-                <span class="form-label">Genero de la pelicula</span>
-                <div class="radio-group">
-                @for (genre of movieService.genres(); track $index) {
-                        <label>
-                            <input type="checkbox" name="genre" [value]="genre.name" (change)="onCheckboxChange($event, 'genres')" />
-                            {{ genre.name }}
-                        </label>
-                }
-                </div>
+            <div class="advanced-search-toggle">
+                <button type="button" class="toggle-btn" (click)="toggleAdvancedSearch()">
+                    <span>{{ showAdvancedSearch() ? 'Ocultar búsqueda avanzada' : 'Búsqueda avanzada' }}</span>
+                    <svg class="toggle-icon" [class.rotated]="showAdvancedSearch()" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </button>
             </div>
 
-            <div class="form-field">
-                <span class="form-label">Estado de ánimo objetivo</span>
-                <div class="radio-group">
-                @for (mood of moods; track $index) {
-                        <label>
-                            <input type="checkbox" name="mood" [value]="mood" (change)="onCheckboxChange($event, 'moods')" />
-                            {{ mood | titlecase }}
-                        </label>
-                    }
-                </div>
-            </div>
+            <div class="advanced-filters" [class.hidden]="!showAdvancedSearch()">
+                <div class="filters-content">
+                    <div class="form-field">
+                        <span class="form-label">Genero de la pelicula</span>
+                        <div class="radio-group">
+                        @for (genre of movieService.genres(); track $index) {
+                                <label>
+                                    <input type="checkbox" name="genre" [value]="genre.name" (change)="onCheckboxChange($event, 'genres')" />
+                                    {{ genre.name }}
+                                </label>
+                        }
+                        </div>
+                    </div>
 
-            <div class="form-field radios">
-                <span class="form-label">Duración de la película</span>
-                <div class="radio-group">
-                @for (duration of durations; track $index) {
-                        <label>
-                            <input type="checkbox" name="duration" [value]="duration" (change)="onCheckboxChange($event, 'durations')" />
-                            {{ duration | titlecase }}
-                        </label>
-                    }
-                </div>
-            </div>
+                    <div class="form-field">
+                        <span class="form-label">Estado de ánimo objetivo</span>
+                        <div class="radio-group">
+                        @for (mood of moods; track $index) {
+                                <label>
+                                    <input type="checkbox" name="mood" [value]="mood" (change)="onCheckboxChange($event, 'moods')" />
+                                    {{ mood | titlecase }}
+                                </label>
+                            }
+                        </div>
+                    </div>
 
-            <div class="form-field">
-                <span class="form-label">Audiencia objetivo</span>
-                <div class="radio-group">
-                    @for (audience of audiences; track $index) {
-                        <label>
-                            <input type="checkbox" name="audience" [value]="audience" (change)="onCheckboxChange($event, 'audiences')" />
-                            {{ audience | titlecase }}
-                        </label>
-                    }
+                    <div class="form-field radios">
+                        <span class="form-label">Duración de la película</span>
+                        <div class="radio-group">
+                        @for (duration of durations; track $index) {
+                                <label>
+                                    <input type="checkbox" name="duration" [value]="duration" (change)="onCheckboxChange($event, 'durations')" />
+                                    {{ duration | titlecase }}
+                                </label>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <span class="form-label">Audiencia objetivo</span>
+                        <div class="radio-group">
+                            @for (audience of audiences; track $index) {
+                                <label>
+                                    <input type="checkbox" name="audience" [value]="audience" (change)="onCheckboxChange($event, 'audiences')" />
+                                    {{ audience | titlecase }}
+                                </label>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
 

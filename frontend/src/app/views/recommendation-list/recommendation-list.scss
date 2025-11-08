@@ -5,25 +5,75 @@
   background: var(--secondary-color);
   padding: 2.5rem;
   border-radius: 1.5rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 20px var(--shadow-color);
   margin: auto;
   position: relative;
   z-index: 10003;
 }
 
+.close-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: transparent;
+  border: 2px solid var(--danger-color);
+  color: var(--danger-color);
+  padding: 0.6rem 1.2rem;
+  border-radius: 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  @include flex-container(row, center, center, 0.5rem);
+  z-index: 10004;
+  
+  &:hover {
+    background-color: var(--danger-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--danger-shadow);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    background-color: var(--danger-hover);
+  }
+  
+  svg {
+    transition: transform 0.2s ease;
+  }
+  
+  &:hover svg {
+    transform: rotate(90deg);
+  }
+}
+
 .title {
   font-size: 2rem;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--text-primary);
   text-align: center;
 }
 
 .description {
   font-size: 1.1rem;
   text-align: center;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
   margin-bottom: 1rem;
+}
+
+.selection-instruction {
+  font-size: 1rem;
+  text-align: center;
+  color: var(--primary-color);
+  font-weight: 600;
+  padding: 1rem 2rem;
+  background: var(--bg-tertiary);
+  border-radius: 1rem;
+  border: 2px solid var(--primary-color);
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px var(--shadow-color);
 }
 
 .movies-list {
@@ -36,12 +86,26 @@
   &::-webkit-scrollbar {
     width: 6px;
   }
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
+  
+  &::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
     border-radius: 6px;
   }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 6px;
+    transition: background 0.3s ease;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+  
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  
   -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 .movie-card {
@@ -49,14 +113,14 @@
   border-radius: 1rem;
   width: 100%;
   padding: 1.2rem;
-  background: #f8f5ff;
-  border: 1px solid rgba(138, 92, 246, 0.15);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 6px 20px var(--shadow-color);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 25px var(--shadow-color);
   }
 }
 
@@ -76,19 +140,19 @@
   .movie-title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #222;
+    color: var(--text-primary);
   }
 
   .movie-description {
     font-size: 1rem;
     line-height: 1.4;
-    color: #555;
+    color: var(--text-secondary);
   }
 }
 
 .movie-numbers{
     font-size: 0.875rem;
-    color: #a7a5a5;
+    color: var(--text-secondary);
     @include flex-container(row, flex-start, center, 1rem);
 
     & span{
@@ -101,9 +165,44 @@
 
     & .genre-pill{
         font-size: 0.7rem;
-        border: 1px solid #e5e5e5;
+        border: 1px solid var(--border-color);
         padding: 0.2rem 0.6rem;
         border-radius: 9999px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px var(--shadow-color);
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+}
+
+.select-movie-btn {
+    background: linear-gradient(135deg, var(--primary-color), #a855f7);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    @include flex-container(row, center, center, 0.5rem);
+    margin-top: 1rem;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+        background: linear-gradient(135deg, #a855f7, var(--primary-color));
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
+    
+    svg {
+        transition: transform 0.2s ease;
+    }
+    
+    &:hover svg {
+        transform: scale(1.1);
     }
 }

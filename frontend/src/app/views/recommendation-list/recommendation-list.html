@@ -1,6 +1,14 @@
 <div class="wrapper">
+    <button class="close-btn" (click)="closeModal()" title="Seguir buscando">
+        <span>Seguir buscando</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+    </button>
+    
     <span class="title">Tus Peliculas Perfectas</span>
     <p class="description">✨ Basado en tu estado de animo, estas son tus recomendaciones ✨</p>
+    <p class="selection-instruction">Por favor selecciona la película que deseas mirar. Esto nos ayudará a mejorar futuras recomendaciones</p>
     <div class="movies-list">
         @for (movie of data.recommendations; track $index) {
             <div class="movie-card">
@@ -25,6 +33,10 @@
                             </span>
                         }
                     </div>
+                    
+                    <button class="select-movie-btn" (click)="selectMovie(movie)">
+                        <span>Elegir película</span>
+                    </button>
                 </div>
             </div>
         }

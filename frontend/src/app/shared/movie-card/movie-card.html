@@ -15,7 +15,7 @@
             </span>
         </div>
         <div class="genres">
-            @for (genre of getGenres(movie()?.genre_ids); track $index) {
+            @for (genre of getGenres(movie()?.genre_ids?.slice(0,3)); track $index) {
                 <span class="genre-pill">
                     {{ genre.name }}
                 </span>

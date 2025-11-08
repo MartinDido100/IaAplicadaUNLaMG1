@@ -6,7 +6,7 @@
     background: var(--secondary-color);
     border-radius: 0.5rem;
     @include flex-container(column, flex-start, flex-start, 1.5rem);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px var(--shadow-color);
     padding: 0 0 1.5rem 0;
     transition: transform 0.3s ease;
     width: 100%;
@@ -35,11 +35,12 @@
 .movie-title {
     font-size: 1rem;
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 .movie-info{
     font-size: 0.875rem;
-    color: #a7a5a5;
+    color: var(--text-secondary);
     @include flex-container(row, flex-start, center, 0.9rem);
 
     & span{
@@ -56,19 +57,43 @@
 
     & .genre-pill{
         font-size: 0.7rem;
-        border: 1px solid #e5e5e5;
+        border: 1px solid var(--border-color);
         padding: 0.2rem 0.6rem;
         border-radius: 9999px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px var(--shadow-color);
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
     }
 }
 
 .desc{
-    color: #979494;
+    color: var(--text-secondary);
     height: 8rem;
     overflow-y: auto;
     display: -webkit-box;
     line-clamp: 4;
     font-family: 'Pt Serif', serif;
     -webkit-box-orient: vertical;
+    
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: var(--scrollbar-track);
+        border-radius: 6px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
+        border-radius: 6px;
+        transition: background 0.3s ease;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+        background: var(--scrollbar-thumb-hover);
+    }
+    
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
