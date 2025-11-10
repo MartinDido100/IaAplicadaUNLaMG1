@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450" fill="none">
+  <!-- Fondo -->
+  <rect width="300" height="450" fill="#1a1a1a"/>
+  
+  <!-- Borde -->
+  <rect x="2" y="2" width="296" height="446" fill="none" stroke="#333" stroke-width="2" stroke-dasharray="8,4"/>
+  
+  <!-- Icono de imagen -->
+  <g transform="translate(150,225)">
+    <circle cx="0" cy="-20" r="40" fill="#333"/>
+    <path d="M-25,-5 L-25,25 L25,25 L25,-5 Z" fill="#333"/>
+    <circle cx="-10" cy="5" r="8" fill="#555"/>
+    <path d="M-25,10 L-15,0 L-5,10 L5,0 L15,10 L25,20 L25,25 L-25,25 Z" fill="#555"/>
+  </g>
+  
+  <!-- Texto -->
+  <text x="150" y="280" text-anchor="middle" fill="#666" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+    SIN IMAGEN
+  </text>
+  <text x="150" y="300" text-anchor="middle" fill="#555" font-family="Arial, sans-serif" font-size="12">
+    Poster no disponible
+  </text>
+  
+  <!-- Decoración -->
+  <rect x="50" y="320" width="200" height="2" fill="#333"/>
+  <circle cx="70" cy="340" r="3" fill="#333"/>
+  <circle cx="150" cy="340" r="3" fill="#333"/>
+  <circle cx="230" cy="340" r="3" fill="#333"/>
+</svg>

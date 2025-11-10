@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Auth } from '../../../../services/auth';
 import { Spinner } from '../../../../shared/spinner/spinner';
 import { Router, RouterLink } from '@angular/router';
+import { TransitionService } from '../../../../services/transition';
 
 @Component({
   selector: 'app-register',
@@ -16,6 +17,7 @@ export class Register {
   private fb = inject(FormBuilder);
   authService = inject(Auth);
   private router = inject(Router);
+  private transitionService = inject(TransitionService);
   loading = signal(false);
   submitted = signal(false);
   registerForm: FormGroup;
@@ -34,11 +36,17 @@ export class Register {
     this.submitted.set(true);
     if (this.registerForm.valid) {
       this.loading.set(true);
+      this.errorMessage.set(''); // Limpiar errores previos
+      
       const { email, username, password } = this.registerForm.value;
       this.authService.register(email, username, password).subscribe({
-        next: (_) => {
+        next: async (_) => {
           this.loading.set(false);
-          this.router.navigate(['/']);
+          
+          // Mostrar la animación de transición exitosa
+          await this.transitionService.showRegisterSuccessTransition();
+          
+          // La navegación ya se maneja en el servicio de transición
         },
         error: (error) => {
           console.error('Registration error:', error);

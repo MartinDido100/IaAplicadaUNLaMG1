@@ -58,8 +58,21 @@ export class MovieService {
       queryParams = queryParams.set('primary_release_year', year.toString());
     }
 
-    const url = `${environment.movieApiUrl}/discover/movie?include_adult=false&include_video=false&page=${page}&sort_by=popularity.desc`;
+    const url = `${environment.movieApiUrl}/discover/movie`;
 
-    return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: queryParams })  }
+    return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: queryParams })  
+  }
+
+  getByQuery(query: string, page: number = 1) {
+    // https://api.themoviedb.org/3/search/movie?query=shrek&include_adult=false&language=es&page=1
+    let queryParams = new HttpParams();
+    queryParams = queryParams.set('language', 'es');
+    queryParams = queryParams.set('query', query);
+    queryParams = queryParams.set('page', page.toString());
+
+    const url = `${environment.movieApiUrl}/search/movie`;
+
+    return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: queryParams })  
+  }
 
 }

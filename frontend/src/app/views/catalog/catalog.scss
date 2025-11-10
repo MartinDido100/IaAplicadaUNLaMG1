@@ -61,7 +61,7 @@
 
 .search-input {
   flex: 1;
-  padding: 0.875rem 1rem 0.875rem 3rem;
+  padding: 0.875rem 3rem 0.875rem 3rem; // Padding derecho para el botón de limpiar
   border: none;
   background: transparent;
   color: var(--text-primary);
@@ -74,6 +74,35 @@
   
   &:focus {
     outline: none;
+  }
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  @include flex-container(row, center, center, 0);
+  
+  &:hover {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+  }
+  
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+  
+  svg {
+    width: 16px;
+    height: 16px;
   }
 }
 

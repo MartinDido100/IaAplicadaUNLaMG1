@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Mood, Audience, Duration } from '../../interfaces/Recommendation';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { Mood, Audience, Duration, Preference } from '../../interfaces/Recommendation';
 import { TitleCasePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MovieService } from '../../services/movie-service';
@@ -9,15 +9,16 @@ import { RecommendationList } from '../recommendation-list/recommendation-list';
 import { Dialog } from '@angular/cdk/dialog';
 import { Movie } from '../../../../../api/src/models/movieInterfaces';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-recommendations',
-  imports: [TitleCasePipe,ReactiveFormsModule,Spinner],
+  imports: [TitleCasePipe,ReactiveFormsModule,Spinner,TimeAgoPipe],
   templateUrl: './recommendations.html',
   styleUrl: './recommendations.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Recommendations {
+export class Recommendations implements OnInit{
   private readonly fb = inject(FormBuilder);
   readonly movieService = inject(MovieService);
   private readonly rS = inject(RecommendationService);
@@ -30,6 +31,19 @@ export class Recommendations {
   audiences = Object.values(Audience);
   durations = Object.values(Duration);
   iaForm: FormGroup;
+  preferences = signal<Preference[]>([]);
+
+  ngOnInit() {
+    this.rS.getPreviousSelections().subscribe({
+      next: (response) => {
+        console.log('Previous selections fetched:', response);
+        this.preferences.set(response[0].preferences);
+      },
+      error: (err) => {
+        console.error('Error fetching previous selections:', err);
+      }
+    });
+  }
 
   constructor() {
     this.iaForm = this.fb.group({

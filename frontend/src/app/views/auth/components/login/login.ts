@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Auth } from '../../../../services/auth';
 import { Router, RouterLink } from '@angular/router';
 import { Spinner } from '../../../../shared/spinner/spinner';
+import { TransitionService } from '../../../../services/transition';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class Login {
   private fb = inject(FormBuilder);
   aS = inject(Auth);
   private router = inject(Router);
+  private transitionService = inject(TransitionService);
   form: FormGroup;
   loading = signal(false);
   loginError = signal('');
@@ -32,10 +34,15 @@ export class Login {
     this.submitted.set(true);
     if (this.form.valid) {
       this.loading.set(true);
+      this.loginError.set(''); // Limpiar errores previos
+      
       this.aS.login(this.form.value.email, this.form.value.password).subscribe({
-        next: () => {
+        next: async () => {
           this.loading.set(false);
-          this.router.navigate(['/']);
+          
+          // Mostrar la animación de transición exitosa
+          await this.transitionService.showLoginSuccessTransition();
+
         },
         error: (e) => {
           this.loading.set(false);

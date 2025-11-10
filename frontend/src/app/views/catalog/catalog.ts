@@ -3,10 +3,11 @@ import { MovieCard } from '../../shared/movie-card/movie-card';
 import { SkeletonComponent } from '../../shared/skeleton/skeleton';
 import { Movie } from '../../interfaces/Movie';
 import { MovieService } from '../../services/movie-service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-catalog',
-  imports: [MovieCard, SkeletonComponent],
+  imports: [MovieCard, SkeletonComponent,FormsModule],
   templateUrl: './catalog.html',
   styleUrl: './catalog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -20,6 +21,7 @@ export class Catalog implements OnInit{
   totalResults = signal(0);
   isLoading = signal(false);
   totalPages = computed(() => Math.min(Math.ceil(this.totalResults() / 20), 500));
+  searchQuery = '';
 
   hasActiveFilters = false;
 
@@ -29,18 +31,35 @@ export class Catalog implements OnInit{
 
   loadMovies(page: number, genreId?: number, year?: number) {
     this.isLoading.set(true);
-    this.mS.getMovieList(page, genreId, year).subscribe({
-      next: (res) => {
-        this.movies.set(res.results);
-        this.totalResults.set(res.total_results);
-        this.currentPage.set(res.page);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading movies:', err);
-        this.isLoading.set(false);
-      }
-    });
+
+    if(this.searchQuery.trim()){
+      this.mS.getByQuery(this.searchQuery.trim(),page).subscribe({
+        next: (res) => {
+          this.movies.set(res.results);
+          this.totalResults.set(res.total_results);
+          this.currentPage.set(res.page);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error('Error searching movies:', err);
+          this.isLoading.set(false);
+        }
+      });
+    }else{
+      this.mS.getMovieList(page, genreId, year).subscribe({
+        next: (res) => {
+          this.movies.set(res.results);
+          this.totalResults.set(res.total_results);
+          this.currentPage.set(res.page);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          console.error('Error loading movies:', err);
+          this.isLoading.set(false);
+        }
+      });
+    }
+
   }
 
   goToPage(page: number | string) {
@@ -53,6 +72,18 @@ export class Catalog implements OnInit{
       this.loadMovies(page);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+  }
+
+  searchByName(){
+    const query = this.searchQuery.trim();
+    if(query){
+      this.loadMovies(1);
+    }
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.loadMovies(1); // Recargar las películas populares
   }
 
   getVisiblePages(): (number | string)[] {

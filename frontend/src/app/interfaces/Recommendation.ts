@@ -35,3 +35,14 @@ export enum Mood {
 export interface RecommendationResponse {
     movies: Movie[];
 }
+
+export interface Preference {
+    name: string;
+    date: string;
+    email: string;
+    tmdbId: number;
+}
+
+export interface PreviousSelectionsResponse {
+    preferences: Preference[];
+}

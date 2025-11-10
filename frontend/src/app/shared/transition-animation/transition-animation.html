@@ -1,0 +1,35 @@
+@if (showAnimation()) {
+  <div 
+    class="transition-overlay"
+    [class.dark-mode]="isDarkMode"
+    [class.fade-in]="animationPhase() === 'fade-in'"
+    [class.show]="animationPhase() === 'show'"
+    [class.fade-out]="animationPhase() === 'fade-out'"
+  >
+    <div class="transition-content">
+      <!-- Logo con animación -->
+      <div class="logo-container">
+        <app-logo 
+          [width]="logoSize()" 
+          [height]="logoSize()" 
+          [backgroundColor]="'transparent'"
+          [color]="'var(--primary-color)'"
+        ></app-logo>
+      </div>
+      
+      <!-- Indicador de carga -->
+      <div class="loading-indicator">
+        <div class="loading-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+      
+      <!-- Mensaje -->
+      @if(message()) {
+        <p class="transition-message">{{ message() }}</p>
+      }
+    </div>
+  </div>
+}

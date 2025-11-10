@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { RecommendationPrompt, RecommendationResponse } from '../interfaces/Recommendation';
+import { PreviousSelectionsResponse, RecommendationPrompt, RecommendationResponse } from '../interfaces/Recommendation';
 import { environment } from '../../environments/environment';
 import { map } from 'rxjs';
 
@@ -23,5 +23,10 @@ export class RecommendationService {
   saveSelection(movieId: number, name: string) {
     const url = `${environment.apiUrl}/recommendations/preferences/`;
     return this.http.put(url, { tmdbId: movieId, name });
+  }
+
+  getPreviousSelections() {
+    const url = `${environment.apiUrl}/recommendations/preferences/`;
+    return this.http.get<PreviousSelectionsResponse[]>(url);
   }
 }

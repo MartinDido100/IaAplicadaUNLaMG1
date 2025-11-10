@@ -3,6 +3,35 @@
         <h2>Tu proxima pelicula <br> <span>te esta esperando</span> </h2>
         <span>Descubre un universo cinematográfico infinito. Explora, filtra y encuentra <br> exactamente lo que buscas en nuestro catálogo inteligente.</span>
     </div>
+    
+    <div class="history-panel">
+        <div class="history-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+                <path d="M12 7v5l4 2"/>
+            </svg>
+            <h4>Historial de selecciones</h4>
+        </div>
+        
+        <div class="history-content">
+            <div class="history-list">
+                <!-- Lista dinámica - se llenará con data del componente -->
+                @for (item of preferences(); track item.tmdbId) {
+                    <div class="history-item">
+                        <span class="movie-title">{{item.name}}</span>
+                        <span class="selection-time">{{ item.date | timeAgo }}</span>
+                    </div>
+                }
+                <!-- Placeholder para cuando no hay historial -->
+                @if (preferences().length === 0) {
+                    <div class="empty-history">
+                        <span>No hay películas recientes</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 
     <div class="gemini-prompt">
         <h3>Encuentra tu pelicula perfecta</h3>
