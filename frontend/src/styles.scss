@@ -1,6 +1,23 @@
+
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
 @use '@angular/cdk' as cdk;
 @import '@angular/cdk/overlay-prebuilt.css';
 
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$magenta-palette,
+      tertiary: mat.$violet-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
 
 @include cdk.overlay();
 
@@ -107,3 +124,58 @@ img, picture, video, canvas, svg {
     font-size: 0.9rem;
     font-weight: 600;
 }
+
+/* Estilos personalizados para Snackbar */
+.mdc-snackbar {
+  z-index: 999999 !important;
+}
+
+.mdc-snackbar__surface {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-radius: 1rem !important;
+  box-shadow: 0 8px 25px var(--shadow-color) !important;
+  border: 1px solid var(--border-color) !important;
+  min-width: 320px !important;
+}
+
+.mdc-snackbar__label {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+}
+
+.mdc-snackbar__actions {
+  margin-left: 1rem !important;
+}
+
+.mat-mdc-snack-bar-action {
+  --mdc-text-button-label-text-color: var(--primary-color) !important;
+  font-weight: 700 !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.mat-mdc-snack-bar-action:hover {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+/* Estilos específicos para snackbar de éxito */
+.success-snackbar .mdc-snackbar__surface {
+  background-color: var(--bg-tertiary) !important;
+  border-left: 4px solid var(--primary-color) !important;
+}
+
+/* Estilos específicos para snackbar de error */
+.error-snackbar .mdc-snackbar__surface {
+  background-color: var(--bg-tertiary) !important;
+  border-left: 4px solid var(--danger-color) !important;
+}
+
+.error-snackbar .mdc-snackbar__label {
+  color: var(--danger-color) !important;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

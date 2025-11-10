@@ -19,4 +19,9 @@ export class RecommendationService {
       })
     ); 
   }
+
+  saveSelection(movieId: number, name: string) {
+    const url = `${environment.apiUrl}/recommendations/preferences/`;
+    return this.http.put(url, { tmdbId: movieId, name });
+  }
 }

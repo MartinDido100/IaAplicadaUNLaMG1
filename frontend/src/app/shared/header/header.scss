@@ -111,3 +111,8 @@ a{
         transform: rotate(15deg);
     }
 }
+
+.loading-container {
+    @include flex-container(row, center, center, 0);
+    padding: 0.5rem 1rem;
+}

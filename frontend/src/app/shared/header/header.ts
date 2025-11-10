@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { ThemeService } from '../../services/theme';
+import { SkeletonComponent } from '../skeleton/skeleton';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink,RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, SkeletonComponent],
   templateUrl: './header.html',
   styleUrl: './header.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -13,7 +14,6 @@ import { ThemeService } from '../../services/theme';
 export class Header {
   auth = inject(Auth);
   themeService = inject(ThemeService);
-  readonly token = localStorage.getItem('accessToken');
 
   logout() {
     this.auth.logout();

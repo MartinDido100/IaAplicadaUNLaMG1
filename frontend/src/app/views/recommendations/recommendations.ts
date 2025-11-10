@@ -7,6 +7,8 @@ import { RecommendationService } from '../../services/recommendation';
 import { Spinner } from '../../shared/spinner/spinner';
 import { RecommendationList } from '../recommendation-list/recommendation-list';
 import { Dialog } from '@angular/cdk/dialog';
+import { Movie } from '../../../../../api/src/models/movieInterfaces';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-recommendations',
@@ -20,6 +22,7 @@ export class Recommendations {
   readonly movieService = inject(MovieService);
   private readonly rS = inject(RecommendationService);
   private readonly dialog = inject(Dialog);
+  private _snackBar = inject(MatSnackBar)
   loading = signal(false);
   showAdvancedSearch = signal(false);
 
@@ -58,12 +61,35 @@ export class Recommendations {
           data: { recommendations: response.movies },
           width: '80%',
           maxWidth: '80rem',
-        })
+        }).closed.subscribe(selectedMovie => {
+          if (selectedMovie) {
+            const movie = selectedMovie as Movie;
+            this.rS.saveSelection(movie.id, movie.title).subscribe({
+              next: () => {
+                this._snackBar.open('¡Película guardada en tus selecciones!', 'Cerrar', {
+                  duration: 4000,
+                  panelClass: 'success-snackbar'
+                });
+              },
+              error: (err) => {
+                console.log('Error saving movie selection:', err);
+                this._snackBar.open('Error al guardar la selección', '', {
+                  duration: 4000,
+                  panelClass: 'error-snackbar'
+                });
+              }
+            });
+          }
+        });
         this.loading.set(false);
       },
       error: (err) => {
         this.loading.set(false);
         console.error('Error fetching recommendations:', err);
+        this._snackBar.open('Error al obtener recomendaciones', 'Reintentar', {
+          duration: 4000,
+          panelClass: 'error-snackbar'
+        });
       }
       });
     }

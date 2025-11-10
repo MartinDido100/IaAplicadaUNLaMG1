@@ -10,14 +10,17 @@
     padding: 0 0 1.5rem 0;
     transition: transform 0.3s ease;
     width: 100%;
+    max-height: 50rem;
 
     & .poster{
         overflow: hidden;
         border-radius: 0.5rem 0.5rem 0 0;
+        width: 100%;
     }
 
     & .poster img{
         transition: transform 0.3s ease;
+        width: 100%;
     }
 
     & img:hover{

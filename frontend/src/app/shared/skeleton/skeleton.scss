@@ -1,0 +1,36 @@
+.skeleton {
+  background: linear-gradient(90deg, 
+    var(--bg-secondary) 25%, 
+    var(--bg-tertiary) 50%, 
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  display: inline-block;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Variantes específicas */
+.skeleton-text {
+  height: 1rem;
+  border-radius: 4px;
+}
+
+.skeleton-button {
+  height: 2.5rem;
+  border-radius: 8px;
+}
+
+.skeleton-avatar {
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+}

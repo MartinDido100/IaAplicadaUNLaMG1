@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Genre, MovieApiResponse } from '../interfaces/Movie';
 import { environment } from '../../environments/environment';
@@ -42,4 +42,24 @@ export class MovieService {
       tap(genres => this.genres.set(genres))
     );
   }
+  
+  getMovieList(page: number = 1, genreId?: number, year?: number) {
+    let queryParams = new HttpParams();
+
+    queryParams = queryParams.set('language', 'es');
+    queryParams = queryParams.set('sort_by', 'popularity.desc');
+    queryParams = queryParams.set('page', page.toString());
+
+    if (genreId) {
+      queryParams = queryParams.set('with_genres', genreId.toString());
+    }
+    
+    if (year) {
+      queryParams = queryParams.set('primary_release_year', year.toString());
+    }
+
+    const url = `${environment.movieApiUrl}/discover/movie?include_adult=false&include_video=false&page=${page}&sort_by=popularity.desc`;
+
+    return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: queryParams })  }
+
 }

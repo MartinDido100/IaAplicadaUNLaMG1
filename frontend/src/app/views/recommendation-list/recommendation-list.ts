@@ -29,7 +29,7 @@ export class RecommendationList {
   }
 
   selectMovie(movie: Movie) {
-    console.log('Película seleccionada:', movie.title);
+    this.dialogRef.close(movie);
   }
 
   closeModal() {
