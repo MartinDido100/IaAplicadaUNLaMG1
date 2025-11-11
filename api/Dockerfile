@@ -13,8 +13,8 @@ RUN npm ci
 # Copiar el código fuente
 COPY src ./src
 
-# Compilar TypeScript a JavaScript
-RUN npx tsc
+# Compilar TypeScript a JavaScript especificando directorio de salida
+RUN npx tsc --outDir dist
 
 # Etapa de producción
 FROM node:20-alpine
