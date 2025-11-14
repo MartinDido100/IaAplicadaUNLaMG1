@@ -129,4 +129,8 @@ export class Catalog implements OnInit{
     this.loadMovies(1);
     console.log('Filtros limpiados');
   }
+
+  getMovieList(){
+    return this.movies().filter(movie => movie.original_language.trim() !== 'ko');
+  }
 }

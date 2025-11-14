@@ -2,8 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Alan+Sans:wght@300..900&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 .logo-cont{
+    cursor: pointer;
     position: relative;
     @include flex-container(row, center, center, 1rem);
+    transition: transform 0.2s ease;
 
     & .shine-svg{
         position: absolute;
@@ -16,6 +18,10 @@
 
     & svg{
         color: var(--primary-color);
+    }
+
+    &:hover{
+        transform: scale(1.03);
     }
 }
 

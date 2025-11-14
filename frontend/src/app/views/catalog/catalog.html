@@ -100,7 +100,7 @@
       </div>
   }@else{
       <div class="movies-grid content-grid" [style.display]="!isLoading() ? 'grid' : 'none'">
-        @for (movie of movies(); track movie.id) {
+        @for (movie of getMovieList(); track movie.id) {
           <app-movie-card [movie]="movie"></app-movie-card>
         }
       </div>

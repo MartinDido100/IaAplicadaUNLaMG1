@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { ThemeService } from '../../services/theme';
 import { SkeletonComponent } from '../skeleton/skeleton';
@@ -14,6 +14,7 @@ import { SkeletonComponent } from '../skeleton/skeleton';
 export class Header {
   auth = inject(Auth);
   themeService = inject(ThemeService);
+  router = inject(Router);
 
   logout() {
     this.auth.logout();
@@ -25,5 +26,9 @@ export class Header {
 
   get isDarkMode() {
     return this.themeService.isDarkMode;
+  }
+
+  gotoHome(){
+    this.router.navigate(['/']);
   }
 }

@@ -24,7 +24,12 @@ export class MovieService {
   getPopularMovies() {
     const url = `${environment.movieApiUrl}/movie/popular`;
     return this.http.get<MovieApiResponse>(url, { headers: this.apiHeaders, params: this.languageParams }).pipe(
-      map(response => response.results.slice(0, 5))
+      map(response =>
+        response.results
+          .slice()
+          .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
+          .slice(0, 5),
+      ),
     );
   }
 

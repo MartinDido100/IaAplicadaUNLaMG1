@@ -36,7 +36,6 @@ export class Recommendations implements OnInit{
   ngOnInit() {
     this.rS.getPreviousSelections().subscribe({
       next: (response) => {
-        console.log('Previous selections fetched:', response);
         this.preferences.set(response[0].preferences);
       },
       error: (err) => {
