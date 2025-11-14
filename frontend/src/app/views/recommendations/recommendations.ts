@@ -34,14 +34,7 @@ export class Recommendations implements OnInit{
   preferences = signal<Preference[]>([]);
 
   ngOnInit() {
-    this.rS.getPreviousSelections().subscribe({
-      next: (response) => {
-        this.preferences.set(response[0].preferences);
-      },
-      error: (err) => {
-        console.error('Error fetching previous selections:', err);
-      }
-    });
+    this.getPreviousSelections();
   }
 
   constructor() {
@@ -51,6 +44,17 @@ export class Recommendations implements OnInit{
       moods: this.fb.array([]),
       audiences: this.fb.array([]),
       durations: this.fb.array([]),
+    });
+  }
+
+  getPreviousSelections() {
+    this.rS.getPreviousSelections().subscribe({
+      next: (response) => {
+        this.preferences.set(response[0].preferences);
+      },
+      error: (err) => {
+        console.error('Error fetching previous selections:', err);
+      }
     });
   }
 
@@ -79,6 +83,7 @@ export class Recommendations implements OnInit{
             const movie = selectedMovie as Movie;
             this.rS.saveSelection(movie.id, movie.title).subscribe({
               next: () => {
+                this.getPreviousSelections();
                 this._snackBar.open('¡Película guardada en tus selecciones!', 'Cerrar', {
                   duration: 4000,
                   panelClass: 'success-snackbar'

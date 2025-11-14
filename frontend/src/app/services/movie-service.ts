@@ -69,7 +69,6 @@ export class MovieService {
   }
 
   getByQuery(query: string, page: number = 1) {
-    // https://api.themoviedb.org/3/search/movie?query=shrek&include_adult=false&language=es&page=1
     let queryParams = new HttpParams();
     queryParams = queryParams.set('language', 'es');
     queryParams = queryParams.set('query', query);
