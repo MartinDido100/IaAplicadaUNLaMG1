@@ -3,7 +3,7 @@ import { AuthResponse } from '../interfaces/Auth';
 import { environment } from '../../environments/environment';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
-  if (req.url.includes(environment.apiUrl)) {
+  if (!req.url.includes(environment.movieApiUrl)) {
     const token = localStorage.getItem('accessToken');
 
     if (token) {
